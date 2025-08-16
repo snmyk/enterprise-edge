@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Modal, ScrollView, Alert } from 'react-native';
 import { MaterialIcons, FontAwesome, Feather } from '@expo/vector-icons';
 import { Audio } from 'expo-av';
-import { theme } from '@/shared/theme';
 
 type Recording = {
   id: string;
@@ -291,7 +290,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     width: 60,
     height: 60,
-    backgroundColor: theme.royalBlue,
+    backgroundColor: 'blue',
     borderRadius: 30,
     marginBottom: 20,
     marginLeft: 20,

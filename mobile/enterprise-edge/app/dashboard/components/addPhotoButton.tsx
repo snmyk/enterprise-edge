@@ -2,7 +2,7 @@ import React, { useState, useRef } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Image, Dimensions } from 'react-native';
 import { CameraView, useCameraPermissions } from 'expo-camera';
 import { Ionicons } from '@expo/vector-icons';
-import { theme } from '@/shared/theme';
+
 
 interface AddPhotoButtonProps {
   onPress?: () => void;
@@ -118,7 +118,7 @@ const styles = StyleSheet.create({
   title: { fontSize: 16, fontWeight: "600", marginBottom: 4, color: "#333" },
   subtitle: { fontSize: 13, color: "#666", marginBottom: 11 },
   button: {
-    backgroundColor: theme.royalBlue,
+    backgroundColor: 'blue',
     paddingVertical: 12,
     paddingHorizontal: 30,
     borderRadius: 5,
@@ -132,7 +132,7 @@ const styles = StyleSheet.create({
   imagePreview: { width: "50%", height: 100, borderRadius: 5 },
   permissionContainer: { flex: 1, justifyContent: "center", alignItems: "center" },
   permissionText: { fontSize: 16, marginBottom: 10, color: "#333" },
-  permissionButton: { backgroundColor: theme.royalBlue, padding: 10, borderRadius: 5 },
+  permissionButton: { backgroundColor: 'blue', padding: 10, borderRadius: 5 },
   permissionButtonText: { color: "white", fontWeight: "600" },
 
   fullScreenCamera: {
