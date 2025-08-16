@@ -15,9 +15,6 @@ export default function HomeScreen() {
       <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
         <View style={styles.content}>
           <DashBoard />
-          <RewardsSection />
-          <CollectionPoints />
-          <RecentReports />
         </View>
       </ScrollView>
       <BottomNavigation />
