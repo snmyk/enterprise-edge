@@ -1,6 +1,6 @@
 import React from 'react';
 import { Tabs } from 'expo-router';
-import { Chrome as Home, FileText, MapPin, Gift, User } from 'lucide-react-native';
+import { AntDesign, FontAwesome, Ionicons } from '@expo/vector-icons';
 
 export default function BottomNavigation() {
   return (
@@ -25,45 +25,39 @@ export default function BottomNavigation() {
       <Tabs.Screen
         name="index"
         options={{
-          title: 'Home',
           tabBarIcon: ({ size, color }) => (
-            <Home size={size} color={color} />
+            <Ionicons name="home" size={size} color={color} />
           ),
         }}
       />
       <Tabs.Screen
-        name="report"
+        name="PointsScreen"
         options={{
-          title: 'Report',
+          tabBarIcon: ({ size, color }) =>
+            <Ionicons name="location" size={24} color={color} />
+        }}
+      />
+      <Tabs.Screen
+        name="ReportsScreen"
+        options={{
           tabBarIcon: ({ size, color }) => (
-            <FileText size={size} color={color} />
+            <AntDesign name="filetext1" size={size} color={color} />
           ),
         }}
       />
       <Tabs.Screen
-        name="points"
+        name="RewardsScreen"
         options={{
-          title: 'Points',
           tabBarIcon: ({ size, color }) => (
-            <MapPin size={size} color={color} />
+            <Ionicons name="gift" size={24} color={color} />
           ),
         }}
       />
       <Tabs.Screen
-        name="rewards"
+        name="ProfileScreen"
         options={{
-          title: 'Rewards',
           tabBarIcon: ({ size, color }) => (
-            <Gift size={size} color={color} />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="profile"
-        options={{
-          title: 'Profile',
-          tabBarIcon: ({ size, color }) => (
-            <User size={size} color={color} />
+            <FontAwesome name="user" size={size} color={color} />
           ),
         }}
       />
