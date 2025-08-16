@@ -6,6 +6,7 @@ import RewardsSection from '@/components/RewardsSection';
 import CollectionPoints from '@/components/CollectionPoints';
 import RecentReports from '@/components/RecentReports';
 import DashBoard from '../dashboard/dashboard';
+import BottomNavigation from '@/components/BottomNavigation';
 
 export default function HomeScreen() {
   return (
@@ -19,6 +20,7 @@ export default function HomeScreen() {
           <RecentReports />
         </View>
       </ScrollView>
+      <BottomNavigation />
     </SafeAreaView>
   );
 }
