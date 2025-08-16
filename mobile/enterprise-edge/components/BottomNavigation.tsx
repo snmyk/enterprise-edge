@@ -1,5 +1,6 @@
 import React from 'react';
 import { Tabs } from 'expo-router';
+import { StyleSheet } from 'react-native';
 import { Chrome as Home, FileText, MapPin, Gift, User } from 'lucide-react-native';
 
 export default function BottomNavigation() {
@@ -70,3 +71,27 @@ export default function BottomNavigation() {
     </Tabs>
   );
 }
+
+const styles = StyleSheet.create({
+   bottomNavigation: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    flexDirection: 'row',
+    backgroundColor: 'white',
+    paddingVertical: 15,
+    paddingHorizontal: 10,
+    borderTopWidth: 1,
+    borderTopColor: '#E0E0E0',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: -2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 3.84,
+    elevation: 8,
+    zIndex: 1000,
+  },
+});
