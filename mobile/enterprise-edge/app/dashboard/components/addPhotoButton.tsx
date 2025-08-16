@@ -3,7 +3,6 @@ import { View, Text, TouchableOpacity, StyleSheet, Image, Dimensions } from 'rea
 import { CameraView, useCameraPermissions } from 'expo-camera';
 import { Ionicons } from '@expo/vector-icons';
 
-
 interface AddPhotoButtonProps {
   onPress?: () => void;
   imageUri?: string | null;
@@ -118,7 +117,7 @@ const styles = StyleSheet.create({
   title: { fontSize: 16, fontWeight: "600", marginBottom: 4, color: "#333" },
   subtitle: { fontSize: 13, color: "#666", marginBottom: 11 },
   button: {
-    backgroundColor: 'blue',
+    backgroundColor: '#0074D9',
     paddingVertical: 12,
     paddingHorizontal: 30,
     borderRadius: 5,
@@ -132,7 +131,7 @@ const styles = StyleSheet.create({
   imagePreview: { width: "50%", height: 100, borderRadius: 5 },
   permissionContainer: { flex: 1, justifyContent: "center", alignItems: "center" },
   permissionText: { fontSize: 16, marginBottom: 10, color: "#333" },
-  permissionButton: { backgroundColor: 'blue', padding: 10, borderRadius: 5 },
+  permissionButton: { backgroundColor: '#0074D9', padding: 10, borderRadius: 5 },
   permissionButtonText: { color: "white", fontWeight: "600" },
 
   fullScreenCamera: {

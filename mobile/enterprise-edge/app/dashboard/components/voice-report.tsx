@@ -290,7 +290,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     width: 60,
     height: 60,
-    backgroundColor: 'blue',
+    backgroundColor: '#0074D9',
     borderRadius: 30,
     marginBottom: 20,
     marginLeft: 20,
