@@ -5,6 +5,7 @@ import Header from '@/components/Header';
 import RewardsSection from '@/components/RewardsSection';
 import CollectionPoints from '@/components/CollectionPoints';
 import RecentReports from '@/components/RecentReports';
+import DashBoard from '../dashboard/dashboard';
 
 export default function HomeScreen() {
   return (
@@ -12,6 +13,7 @@ export default function HomeScreen() {
       <Header />
       <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
         <View style={styles.content}>
+          <DashBoard />
           <RewardsSection />
           <CollectionPoints />
           <RecentReports />
