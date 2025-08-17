@@ -40,7 +40,7 @@ export default function ReportsScreen() {
       typeIcon: Camera,
       typeColor: '#10B981',
       points: 50,
-      image: 'https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=400',
+      image: 'https://www.gettyimages.com/detail/photo/overflowing-wheelie-bin-royalty-free-image/155382228',
     },
     {
       id: 2,

@@ -12,7 +12,7 @@ export default function PointsScreen() {
       hours: '8:00 AM - 5:00 PM',
       address: '123 Main Road, Township',
 
-      image: 'https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=400&h=200&fit=crop'
+      image: 'https://www.factchecker.in/h-upload/2022/08/08/1500x900_769415-solid-waste-management.webp'
     },
     {
       id: 2,
@@ -21,7 +21,7 @@ export default function PointsScreen() {
       hours: '9:00 AM - 9:00 PM',
       address: '456 Mall Street, City Center',
 
-      image: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&h=200&fit=crop'
+      image: 'https://datatopics.worldbank.org/what-a-waste/img/v3_plastic_waste_bottle_recycling.jpg'
     },
     {
       id: 3,
@@ -30,13 +30,13 @@ export default function PointsScreen() {
       hours: '7:00 AM - 10:00 PM',
       address: '789 University Blvd, Campus',
 
-      image: 'https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=400&h=200&fit=crop'
+      image: 'https://datatopics.worldbank.org/what-a-waste/img/v3_waste_disposal_site.jpg'
     }
   ];
   const [filteredPoints, setFilteredPoints] = useState(collectionPoints);
   const [searchText, setSearchText] = useState("");
 
-  const handleSearch = (text) => {
+  const handleSearch = (text:any) => {
     setSearchText(text);
 
     const filtered = collectionPoints.filter((point) =>

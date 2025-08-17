@@ -1,5 +1,6 @@
-import React, { useState, useRef } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Image, Dimensions } from 'react-native';
+
+import React, { useState, useRef, useEffect } from 'react';
+import { View, Text, TouchableOpacity, StyleSheet, Image, Dimensions, StatusBar, Platform } from 'react-native';
 import { CameraView, useCameraPermissions } from 'expo-camera';
 import { Ionicons } from '@expo/vector-icons';
 import ImagePreview from '../../../components/ImagePreview';
@@ -12,6 +13,7 @@ interface AddPhotoButtonProps {
 }
 
 const { width, height } = Dimensions.get('window');
+const SCREEN_HEIGHT = Platform.OS === 'ios' ? height : height + StatusBar.currentHeight || 0;
 
 const AddPhotoButton: React.FC<AddPhotoButtonProps> = ({
   onPress,
@@ -23,12 +25,33 @@ const AddPhotoButton: React.FC<AddPhotoButtonProps> = ({
   const [showCamera, setShowCamera] = useState(false);
   const [imageUri, setImageUri] = useState<string | null>(initialImageUri || null);
   const [facing, setFacing] = useState<"back" | "front">("back");
+  const [originalStatusBarHidden, setOriginalStatusBarHidden] = useState<boolean | null>(null);
 
   const cameraRef = useRef<CameraView>(null);
+
+  // Store original status bar state when component mounts
+  useEffect(() => {
+    const getStatusBarState = async () => {
+      const hidden = StatusBar.currentHeight === 0;
+      setOriginalStatusBarHidden(hidden);
+    };
+    getStatusBarState();
+  }, []);
+
+  // Restore original status bar state when component unmounts
+  useEffect(() => {
+    return () => {
+      if (originalStatusBarHidden !== null) {
+        StatusBar.setHidden(originalStatusBarHidden);
+      }
+    };
+  }, [originalStatusBarHidden]);
 
   const handlePress = () => {
     if (onPress) onPress();
     if (permission?.granted) {
+      // Hide status bar when opening camera for full immersive experience
+      StatusBar.setHidden(true);
       setShowCamera(true);
     } else {
       requestPermission();
@@ -40,12 +63,16 @@ const AddPhotoButton: React.FC<AddPhotoButtonProps> = ({
       const photo = await cameraRef.current.takePictureAsync();
       setImageUri(photo.uri);
       setShowCamera(false);
+      // Show status bar again when closing camera
+      StatusBar.setHidden(false);
       if (onImageCaptured) onImageCaptured(photo.uri);
     }
   };
 
   const retakePicture = () => {
     if (permission?.granted) {
+      // Hide status bar when opening camera
+      StatusBar.setHidden(true);
       setShowCamera(true);
     } else {
       requestPermission();
@@ -59,6 +86,12 @@ const AddPhotoButton: React.FC<AddPhotoButtonProps> = ({
 
   const toggleCamera = () => {
     setFacing(facing === "back" ? "front" : "back");
+  };
+
+  const closeCamera = () => {
+    setShowCamera(false);
+    // Show status bar again when closing camera
+    StatusBar.setHidden(false);
   };
 
   if (!permission) return <View />;
@@ -101,9 +134,9 @@ const AddPhotoButton: React.FC<AddPhotoButtonProps> = ({
         </View>
       )}
 
-      {/* Full Page Camera */}
+      {/* Full Page Camera - Using fixed positioning to cover the entire screen */}
       {showCamera && (
-        <View style={styles.fullScreenCamera}>
+        <View style={styles.fullScreenOverlay}>
           <CameraView
             style={styles.fullScreenCamera}
             ref={cameraRef}
@@ -113,7 +146,7 @@ const AddPhotoButton: React.FC<AddPhotoButtonProps> = ({
               {/* Close Button */}
               <TouchableOpacity 
                 style={styles.closeButton} 
-                onPress={() => setShowCamera(false)}
+                onPress={closeCamera}
               >
                 <Ionicons name="close" size={30} color="white" />
               </TouchableOpacity>
@@ -217,15 +250,22 @@ const styles = StyleSheet.create({
     fontWeight: "600" 
   },
 
-  // Full Screen Camera Styles
-  fullScreenCamera: {
+  // Full Screen Camera Styles - Enhanced for true full screen
+  fullScreenOverlay: {
+    position: 'fixed', // Use fixed positioning to ensure it covers everything
     top: 0,
     left: 0,
     right: 0,
     bottom: 0,
-    width: width,
-    height: height,
-    zIndex: 1000,
+    width: '100%',
+    height: '100%',
+    zIndex: 9999, // Very high z-index to ensure it's above everything
+    backgroundColor: 'black', // Ensures no transparent areas
+  },
+  fullScreenCamera: {
+    flex: 1,
+    width: '100%',
+    height: '100%',
   },
   cameraControls: {
     flex: 1,
@@ -238,6 +278,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0,0,0,0.5)',
     borderRadius: 25,
     padding: 10,
+    zIndex: 10000,
   },
   flipButton: { 
     position: "absolute", 
@@ -246,6 +287,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0,0,0,0.5)',
     borderRadius: 25,
     padding: 10,
+    zIndex: 10000,
   },
   instructionsContainer: {
     position: 'absolute',
@@ -253,6 +295,7 @@ const styles = StyleSheet.create({
     left: 20,
     right: 20,
     alignItems: 'center',
+    zIndex: 10000,
   },
   instructionsText: {
     color: 'white',
@@ -269,6 +312,7 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     alignItems: 'center',
+    zIndex: 10000,
   },
   captureButton: {
     backgroundColor: "rgba(255,255,255,0.3)",

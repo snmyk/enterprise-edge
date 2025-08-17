@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Modal, ScrollView, Alert } from 'react-native';
+
+import React, { useState, useEffect, useRef } from 'react';
+import { View, Text, TouchableOpacity, StyleSheet, Modal, ScrollView, Alert, Animated, Easing } from 'react-native';
 import { MaterialIcons, FontAwesome, Feather } from '@expo/vector-icons';
 import { Audio } from 'expo-av';
 
@@ -24,6 +25,26 @@ const languages = [
   { code: 'st-ZA', name: 'Sotho' }
 ];
 
+// Sound wave bar component
+const SoundWaveBar = ({ height, animationValue }: { height: number, animationValue: Animated.Value }) => {
+  const animatedHeight = animationValue.interpolate({
+    inputRange: [0, 0.5, 1],
+    outputRange: [height * 0.3, height, height * 0.3],
+  });
+
+  return (
+    <Animated.View
+      style={{
+        width: 4,
+        height: animatedHeight,
+        backgroundColor: '#0074D9',
+        borderRadius: 2,
+        marginHorizontal: 2,
+      }}
+    />
+  );
+};
+
 const VoiceReport: React.FC<VoiceReportProps> = ({ onVoiceRecorded }) => {
   const [selectedLanguage, setSelectedLanguage] = useState(languages[0]);
   const [isRecording, setIsRecording] = useState(false);
@@ -31,14 +52,74 @@ const VoiceReport: React.FC<VoiceReportProps> = ({ onVoiceRecorded }) => {
   const [isRecognizing, setIsRecognizing] = useState(false);
   const [recording, setRecording] = useState<Audio.Recording | null>(null);
   const [showLanguageModal, setShowLanguageModal] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [playbackPosition, setPlaybackPosition] = useState(0);
+  const [playbackDuration, setPlaybackDuration] = useState(0);
+  
+  // Sound animation refs
+  const soundAnimations = useRef<Animated.Value[]>([]);
+  const soundAnimationLoop = useRef<Animated.CompositeAnimation | null>(null);
+  const soundRef = useRef<Audio.Sound | null>(null);
+  
+  // Initialize sound wave animations
+  useEffect(() => {
+    soundAnimations.current = Array(10).fill(0).map(() => new Animated.Value(0));
+  }, []);
 
+  // Cleanup on unmount
   useEffect(() => {
     return () => {
       if (recording) {
         recording.stopAndUnloadAsync();
       }
+      if (soundRef.current) {
+        soundRef.current.unloadAsync();
+      }
+      if (soundAnimationLoop.current) {
+        soundAnimationLoop.current.stop();
+      }
     };
   }, [recording]);
+
+  // Start sound wave animation
+  const startSoundAnimation = () => {
+    // Stop any existing animation
+    if (soundAnimationLoop.current) {
+      soundAnimationLoop.current.stop();
+    }
+
+    // Create animations for each bar with random timing
+    const animations = soundAnimations.current.map((anim, index) => {
+      return Animated.loop(
+        Animated.sequence([
+          Animated.timing(anim, {
+            toValue: 1,
+            duration: 500 + Math.random() * 500, // Random duration between 500-1000ms
+            useNativeDriver: false,
+            easing: Easing.inOut(Easing.ease),
+          }),
+          Animated.timing(anim, {
+            toValue: 0,
+            duration: 500 + Math.random() * 500,
+            useNativeDriver: false,
+            easing: Easing.inOut(Easing.ease),
+          }),
+        ])
+      );
+    });
+
+    // Start all animations
+    soundAnimationLoop.current = Animated.parallel(animations);
+    soundAnimationLoop.current.start();
+  };
+
+  // Stop sound wave animation
+  const stopSoundAnimation = () => {
+    if (soundAnimationLoop.current) {
+      soundAnimationLoop.current.stop();
+      soundAnimations.current.forEach(anim => anim.setValue(0));
+    }
+  };
 
   const startRecording = async () => {
     try {
@@ -64,6 +145,9 @@ const VoiceReport: React.FC<VoiceReportProps> = ({ onVoiceRecorded }) => {
       };
 
       setCurrentRecording(newRecordingData);
+      
+      // Start sound wave animation
+      startSoundAnimation();
 
     } catch (err) {
       console.error('Failed to start recording', err);
@@ -77,6 +161,9 @@ const VoiceReport: React.FC<VoiceReportProps> = ({ onVoiceRecorded }) => {
 
       setIsRecording(false);
       setIsRecognizing(true);
+      
+      // Stop sound wave animation
+      stopSoundAnimation();
 
       await recording.stopAndUnloadAsync();
       const uri = recording.getURI();
@@ -128,18 +215,68 @@ const VoiceReport: React.FC<VoiceReportProps> = ({ onVoiceRecorded }) => {
 
   const playRecording = async (audioUri: string) => {
     try {
+      // If already playing, pause it
+      if (isPlaying && soundRef.current) {
+        await soundRef.current.pauseAsync();
+        setIsPlaying(false);
+        stopSoundAnimation();
+        return;
+      }
+      
+      // If we have a sound object but it's paused, resume it
+      if (soundRef.current) {
+        await soundRef.current.playAsync();
+        setIsPlaying(true);
+        startSoundAnimation();
+        return;
+      }
+      
+      // Otherwise create a new sound object
       const { sound } = await Audio.Sound.createAsync(
         { uri: audioUri },
-        { shouldPlay: true }
+        { shouldPlay: true },
+        onPlaybackStatusUpdate
       );
-      await sound.playAsync();
+      
+      soundRef.current = sound;
+      setIsPlaying(true);
+      startSoundAnimation();
+      
+      // When playback finishes
+      sound.setOnPlaybackStatusUpdate(status => {
+        if (status.isLoaded) {
+          if (status.didJustFinish) {
+            setIsPlaying(false);
+            stopSoundAnimation();
+            setPlaybackPosition(0);
+          } else {
+            setPlaybackPosition(status.positionMillis);
+            setPlaybackDuration(status.durationMillis || 1);
+          }
+        }
+      });
     } catch (err) {
       console.error('Failed to play recording', err);
       Alert.alert('Error', 'Failed to play recording');
     }
   };
+  
+  // Playback status update handler
+  const onPlaybackStatusUpdate = (status: any) => {
+    if (status.isLoaded) {
+      setPlaybackPosition(status.positionMillis);
+      setPlaybackDuration(status.durationMillis || 1);
+    }
+  };
 
   const deleteRecording = () => {
+    // Clean up sound if it exists
+    if (soundRef.current) {
+      soundRef.current.unloadAsync();
+      soundRef.current = null;
+    }
+    setIsPlaying(false);
+    stopSoundAnimation();
     setCurrentRecording(null);
   };
 
@@ -186,6 +323,19 @@ const VoiceReport: React.FC<VoiceReportProps> = ({ onVoiceRecorded }) => {
         )}
       </TouchableOpacity>
 
+      {/* Sound Wave Visualization - Only show when recording */}
+      {isRecording && (
+        <View style={styles.soundWaveContainer}>
+          {soundAnimations.current.map((anim, index) => (
+            <SoundWaveBar 
+              key={index} 
+              height={30 + Math.random() * 20} 
+              animationValue={anim} 
+            />
+          ))}
+        </View>
+      )}
+
       {/* Instructions */}
       <Text style={styles.instructionText}>
         {isRecording ? 'Recording in progress...' : 'Tap the microphone to start recording'}
@@ -204,18 +354,49 @@ const VoiceReport: React.FC<VoiceReportProps> = ({ onVoiceRecorded }) => {
             ) : (
               <Text style={styles.processingText}>Audio recorded successfully</Text>
             )}
-          </View>
-          <View style={styles.recordingActions}>
+            
+            {/* Audio Player UI */}
             {currentRecording.audioUri && (
-              <TouchableOpacity onPress={() => playRecording(currentRecording.audioUri!)}>
-                <Feather
-                  name="play"
-                  size={20}
-                  color="#4CAF50"
-                  style={styles.actionIcon}
-                />
-              </TouchableOpacity>
+              <View style={styles.audioPlayerContainer}>
+                {/* Play/Pause Button */}
+                <TouchableOpacity 
+                  onPress={() => playRecording(currentRecording.audioUri!)}
+                  style={styles.playPauseButton}
+                >
+                  <Feather
+                    name={isPlaying ? "pause" : "play"}
+                    size={20}
+                    color="#4CAF50"
+                  />
+                </TouchableOpacity>
+                
+                {/* Progress Bar */}
+                <View style={styles.progressBarContainer}>
+                  <View 
+                    style={[
+                      styles.progressBar, 
+                      { width: `${(playbackPosition / playbackDuration) * 100}%` }
+                    ]} 
+                  />
+                </View>
+                
+                {/* Sound Wave Visualization for Playback */}
+                {isPlaying && (
+                  <View style={styles.playbackWaveContainer}>
+                    {soundAnimations.current.map((anim, index) => (
+                      <SoundWaveBar 
+                        key={index} 
+                        height={15 + Math.random() * 10} 
+                        animationValue={anim} 
+                      />
+                    ))}
+                  </View>
+                )}
+              </View>
             )}
+          </View>
+          
+          <View style={styles.recordingActions}>
             <TouchableOpacity onPress={deleteRecording}>
               <Feather name="trash-2" size={20} color="#F44336" style={styles.actionIcon} />
             </TouchableOpacity>
@@ -259,9 +440,15 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor: 'white',
     marginBottom: 10,
+    borderRadius: 8,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 2,
   },
   header: {
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: '600',
     marginBottom: 10,
     textAlign: 'center',
@@ -297,10 +484,10 @@ const styles = StyleSheet.create({
   recordButton: {
     alignItems: 'center',
     justifyContent: 'center',
-    width: 60,
-    height: 60,
+    width: 70,
+    height: 70,
     backgroundColor: '#0074D9',
-    borderRadius: 30,
+    borderRadius: 35,
     marginBottom: 20,
     marginLeft: 20,
     alignSelf: 'flex-start',
@@ -316,6 +503,14 @@ const styles = StyleSheet.create({
   recordingButton: {
     backgroundColor: '#F44336',
   },
+  soundWaveContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    height: 50,
+    marginBottom: 10,
+    paddingHorizontal: 20,
+  },
   instructionText: {
     textAlign: 'center',
     color: '#666',
@@ -324,13 +519,18 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
   },
   recordingItem: {
-    backgroundColor: '#fff',
-    borderRadius: 5,
+    backgroundColor: '#f9f9f9',
+    borderRadius: 8,
     padding: 15,
     marginBottom: 10,
     marginHorizontal: 20,
     flexDirection: 'row',
     justifyContent: 'space-between',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+    elevation: 1,
   },
   recordingInfo: {
     flex: 1,
@@ -348,15 +548,18 @@ const styles = StyleSheet.create({
   recordingTranscript: {
     color: '#444',
     fontSize: 14,
+    marginBottom: 10,
   },
   processingText: {
     color: '#666',
     fontSize: 14,
     fontStyle: 'italic',
+    marginBottom: 10,
   },
   recordingActions: {
     flexDirection: 'row',
-    alignItems: 'center',
+    alignItems: 'flex-start',
+    paddingTop: 5,
   },
   actionIcon: {
     marginLeft: 15,
@@ -372,6 +575,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     padding: 20,
     width: '80%',
+    maxHeight: '70%',
   },
   modalTitle: {
     fontSize: 18,
@@ -388,6 +592,37 @@ const styles = StyleSheet.create({
   },
   languageOptionText: {
     fontSize: 16,
+  },
+  audioPlayerContainer: {
+    marginTop: 10,
+    marginBottom: 5,
+  },
+  playPauseButton: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: '#f0f0f0',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 8,
+  },
+  progressBarContainer: {
+    height: 4,
+    backgroundColor: '#e0e0e0',
+    borderRadius: 2,
+    overflow: 'hidden',
+    marginBottom: 8,
+  },
+  progressBar: {
+    height: '100%',
+    backgroundColor: '#4CAF50',
+  },
+  playbackWaveContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    height: 30,
+    marginTop: 5,
   },
 });
 
