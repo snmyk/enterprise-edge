@@ -48,7 +48,7 @@ export default function PointsScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <Header currentPoints={1250} />
+      <Header currentPoints={1750} />
       <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
         <View style={styles.contentWrapper}>
           <View style={styles.titleSection}>

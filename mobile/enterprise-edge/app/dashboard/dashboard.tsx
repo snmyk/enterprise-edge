@@ -4,10 +4,17 @@ import { MaterialIcons, Ionicons, FontAwesome } from '@expo/vector-icons';
 import * as Location from 'expo-location';
 import AddPhotoButton from "./components/addPhotoButton";
 import VoiceReport from "./components/voice-report";
+import TrashPickupReminder from "../../components/TrashPickupReminder"; // Import the new component
 import LocationSearch from "../../components/LocationSearch";
 import { Colors } from "../../constants/Colors";
 
-export default function DashBoard() {
+// Define the props interface
+interface DashBoardProps {
+  currentPoints: number;
+  onPointsUpdate: (newPoints: number) => void;
+}
+
+export default function DashBoard({ currentPoints, onPointsUpdate }: DashBoardProps) {
   const [activeTab, setActiveTab] = useState('Home');
   const [locationData, setLocationData] = useState<{
     location: Location.LocationObject | null;
@@ -46,6 +53,13 @@ export default function DashBoard() {
     setHasVoiceNote(true);
   };
 
+  // Example function to update points when a report is submitted
+  const handleReportSubmission = () => {
+    // Add points for submitting a report
+    const pointsToAdd = 50; // or whatever logic you have
+    onPointsUpdate(currentPoints + pointsToAdd);
+  };
+
   const renderPageContent = () => {
     switch (activeTab) {
       case 'Home':
@@ -61,7 +75,12 @@ export default function DashBoard() {
               <Text style={styles.headerSubtitle}>
                 Help keep our community clean by reporting waste issues
               </Text>
+              {/* Display current points */}
+              <Text style={styles.pointsDisplay}>Current Points: {currentPoints}</Text>
             </View>
+
+            {/* Trash Pickup Reminder - Add this before the progress indicator */}
+            <TrashPickupReminder containerStyle={styles.pickupReminderContainer} />
 
             {/* Progress Indicator */}
             {/* <View style={styles.progressContainer}>
@@ -101,6 +120,16 @@ export default function DashBoard() {
                     initialAddress={locationData.address}
                     containerStyle={styles.locationContainer}
                   />
+                  
+                  {/* Submit button - example of using the points update function */}
+                  {locationData.location && (
+                    <TouchableOpacity 
+                      style={styles.submitButton}
+                      onPress={handleReportSubmission}
+                    >
+                      <Text style={styles.submitButtonText}>Submit Report (+50 points)</Text>
+                    </TouchableOpacity>
+                  )}
                 </View>
               )}
               {capturedImageUri && locationData.address && (
@@ -154,6 +183,16 @@ const styles = StyleSheet.create({
     color: '#687076',
     textAlign: 'center',
     lineHeight: 22,
+  },
+  pointsDisplay: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: Colors.light.tint,
+    textAlign: 'center',
+    marginTop: 8,
+  },
+  pickupReminderContainer: {
+    marginHorizontal: 16,
   },
   progressContainer: {
     flexDirection: 'row',
@@ -229,5 +268,18 @@ const styles = StyleSheet.create({
     color: "white",
     fontSize: 16,
     fontWeight: "600",
+  },
+  submitButton: {
+    backgroundColor: Colors.light.tint,
+    borderRadius: 8,
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    marginTop: 16,
+    alignItems: 'center',
+  },
+  submitButtonText: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: '600',
   },
 });

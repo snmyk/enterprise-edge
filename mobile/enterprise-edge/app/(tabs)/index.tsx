@@ -8,13 +8,19 @@ import RecentReports from '@/components/RecentReports';
 import DashBoard from '../dashboard/dashboard';
 import BottomNavigation from '@/components/BottomNavigation';
 
+
+interface DashBoardProps {
+  currentPoints: number;
+  onPointsUpdate: (newPoints: number) => void;
+}
+
 export default function HomeScreen() {
   return (
     <SafeAreaView style={styles.container}>
-      <Header currentPoints={1250} />
+      <Header currentPoints={1750} />
       <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
         <View style={styles.content}>
-          <DashBoard />
+          <DashBoard currentPoints={1750} onPointsUpdate={(newPoints) => console.log(newPoints)} />
         </View>
       </ScrollView>
       <BottomNavigation />

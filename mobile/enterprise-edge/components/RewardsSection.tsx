@@ -139,6 +139,7 @@ export default function RewardsSection({ currentPoints, onPointsUpdate }: Reward
 
 const styles = StyleSheet.create({
   container: {
+    margin: 16,
     backgroundColor: 'white',
     borderRadius: 12,
     padding: 20,

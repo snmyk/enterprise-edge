@@ -1,8 +1,16 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import { TriangleAlert as AlertTriangle } from 'lucide-react-native';
+import { TriangleAlert as AlertTriangle, ArrowLeft } from 'lucide-react-native';
+import { useRouter } from 'expo-router';
 
-export default function RecentReports() {
+interface RecentReportsProps {
+  showBackButton?: boolean; // Optional prop to control back button visibility
+  onBack?: () => void; // Optional custom back handler
+}
+
+export default function RecentReports({ showBackButton = false, onBack }: RecentReportsProps) {
+  const router = useRouter();
+
   const reports = [
     {
       id: 1,
@@ -12,11 +20,45 @@ export default function RecentReports() {
       status: 'In Progress',
       statusColor: '#F59E0B',
     },
+    {
+      id: 2,
+      title: 'Broken Container',
+      location: 'Park Avenue',
+      time: '1 day ago',
+      status: 'Resolved',
+      statusColor: '#10B981',
+    },
+    {
+      id: 3,
+      title: 'Recycling Bin Full',
+      location: 'Downtown Mall',
+      time: '1 week ago',
+      status: 'Resolved',
+      statusColor: '#10B981',
+    },
   ];
+
+  const handleBack = () => {
+    if (onBack) {
+      onBack();
+    } else {
+      // Navigate back to ReportsScreen
+      router.push('/(tabs)/ReportsScreen'); // Adjust the route based on your routing structure
+    }
+  };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Recent Reports</Text>
+      <View style={styles.header}>
+        {showBackButton && (
+          <TouchableOpacity style={styles.backButton} onPress={handleBack}>
+            <ArrowLeft size={20} color="#111827" />
+          </TouchableOpacity>
+        )}
+        <Text style={[styles.title, showBackButton && styles.titleWithBack]}>
+          Recent Reports
+        </Text>
+      </View>
       
       <View style={styles.reportsList}>
         {reports.map((report) => (
@@ -66,11 +108,27 @@ const styles = StyleSheet.create({
     shadowRadius: 8,
     elevation: 3,
   },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 16,
+  },
+  backButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: '#F3F4F6',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 12,
+  },
   title: {
     fontSize: 18,
     fontWeight: '600',
     color: '#111827',
-    marginBottom: 16,
+  },
+  titleWithBack: {
+    flex: 1, // Take remaining space when back button is present
   },
   reportsList: {
     gap: 12,
