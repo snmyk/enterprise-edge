@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TextInput, Image } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
+import Header from '../../components/Header';
 
 export default function PointsScreen() {
   const collectionPoints = [
@@ -36,7 +37,7 @@ export default function PointsScreen() {
   const [filteredPoints, setFilteredPoints] = useState(collectionPoints);
   const [searchText, setSearchText] = useState("");
 
-  const handleSearch = (text) => {
+  const handleSearch = (text: string) => {
     setSearchText(text);
 
     const filtered = collectionPoints.filter((point) =>
@@ -47,73 +48,54 @@ export default function PointsScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      {/* Header */}
-      <View style={styles.header}>
-        <View style={styles.brandSection}>
-          <View style={styles.logo}>
-            <Ionicons name="leaf" size={24} color="#10B981" />
-          </View>
-          <View style={styles.brandText}>
-            <Text style={styles.brandTitle}>EcoReport</Text>
-            <Text style={styles.brandSubtitle}>Waste Management System</Text>
-          </View>
-        </View>
-        <View style={styles.pointsSection}>
-          <View style={styles.pointsDisplay}>
-            <View style={styles.pointsIcon}>
-              <Ionicons name="diamond" size={20} color="#F59E0B" />
-            </View>
-            <Text style={styles.pointsText}>1250</Text>
-          </View>
-        </View>
-      </View>
-
-      {/* Main Content */}
+      <Header />
       <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
-        <View style={styles.titleSection}>
-          <Text style={styles.title}>Collection Points</Text>
-          <Text style={styles.subtitle}>Find nearby recycling locations and earn points.</Text>
-        </View>
-
-        {/* Search Bar */}
-        <View style={styles.searchContainer}>
-          <View style={styles.searchBar}>
-            <Ionicons name="search" size={20} color="#9CA3AF" style={styles.searchIcon} />
-            <TextInput
-              style={styles.searchInput}
-              placeholder="Search collection points..."
-              placeholderTextColor="#9CA3AF"
-              value={searchText}
-              onChangeText={handleSearch}
-            />
+        <View style={styles.contentWrapper}>
+          <View style={styles.titleSection}>
+            <Text style={styles.title}>Collection Points</Text>
+            <Text style={styles.subtitle}>Find nearby recycling locations and earn points.</Text>
           </View>
-        </View>
 
-        {/* Collection Points List */}
-        <View style={styles.pointsList}>
-          {collectionPoints.map((point) => (
-            <View key={point.id} style={styles.pointCard}>
-              <Image source={{ uri: point.image }} style={styles.pointImage} />
-              <View style={styles.pointInfo}>
-                <Text style={styles.pointName}>{point.name}</Text>
-                <View style={styles.pointDetails}>
-                  <View style={styles.detailRow}>
-                    <Ionicons name="location" size={16} color="#6B7280" />
-                    <Text style={styles.detailText}>{point.distance}</Text>
-                  </View>
-                  <View style={styles.detailRow}>
-                    <Ionicons name="time" size={16} color="#6B7280" />
-                    <Text style={styles.detailText}>{point.hours}</Text>
-                  </View>
-                  <View style={styles.detailRow}>
-                    <Ionicons name="home" size={16} color="#6B7280" />
-                    <Text style={styles.detailText}>{point.address}</Text>
+          {/* Search Bar */}
+          <View style={styles.searchContainer}>
+            <View style={styles.searchBar}>
+              <Ionicons name="search" size={20} color="#9CA3AF" style={styles.searchIcon} />
+              <TextInput
+                style={styles.searchInput}
+                placeholder="Search collection points..."
+                placeholderTextColor="#9CA3AF"
+                value={searchText}
+                onChangeText={handleSearch}
+              />
+            </View>
+          </View>
+
+          {/* Collection Points List */}
+          <View style={styles.pointsList}>
+            {collectionPoints.map((point) => (
+              <View key={point.id} style={styles.pointCard}>
+                <Image source={{ uri: point.image }} style={styles.pointImage} />
+                <View style={styles.pointInfo}>
+                  <Text style={styles.pointName}>{point.name}</Text>
+                  <View style={styles.pointDetails}>
+                    <View style={styles.detailRow}>
+                      <Ionicons name="location" size={16} color="#6B7280" />
+                      <Text style={styles.detailText}>{point.distance}</Text>
+                    </View>
+                    <View style={styles.detailRow}>
+                      <Ionicons name="time" size={16} color="#6B7280" />
+                      <Text style={styles.detailText}>{point.hours}</Text>
+                    </View>
+                    <View style={styles.detailRow}>
+                      <Ionicons name="home" size={16} color="#6B7280" />
+                      <Text style={styles.detailText}>{point.address}</Text>
+                    </View>
                   </View>
                 </View>
-              </View>
 
-            </View>
-          ))}
+              </View>
+            ))}
+          </View>
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -183,6 +165,9 @@ const styles = StyleSheet.create({
   content: {
     flex: 1,
     paddingHorizontal: 20,
+  },
+  contentWrapper: {
+    flex: 1,
   },
   titleSection: {
     marginTop: 24,

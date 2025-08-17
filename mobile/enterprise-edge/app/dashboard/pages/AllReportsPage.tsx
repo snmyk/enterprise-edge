@@ -3,6 +3,8 @@ import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Image, TextInput 
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { Camera, Mic, MapPin, Clock, Search, Filter, ArrowLeft, Calendar } from 'lucide-react-native';
+import Header from '../../../components/Header';
+import BottomNavigation from '../../../components/BottomNavigation';
 
 export default function AllReportsPage() {
   const router = useRouter();
@@ -148,15 +150,7 @@ export default function AllReportsPage() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.header}>
-        <TouchableOpacity style={styles.backButton} onPress={handleBack}>
-          <ArrowLeft size={20} color="#6B7280" />
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>All Reports</Text>
-        <TouchableOpacity style={styles.filterButton}>
-          <Filter size={20} color="#6B7280" />
-        </TouchableOpacity>
-      </View>
+      <Header />
 
       <View style={styles.searchContainer}>
         <View style={styles.searchInputContainer}>
@@ -262,6 +256,7 @@ export default function AllReportsPage() {
           )}
         </View>
       </ScrollView>
+      <BottomNavigation />
     </SafeAreaView>
   );
 }

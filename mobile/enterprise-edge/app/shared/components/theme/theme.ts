@@ -5,3 +5,6 @@ export const colors = {
   success: "#28A745",
   background: "#F9F9F9",
 };
+
+// Default export to fix the missing default export error
+export default colors;

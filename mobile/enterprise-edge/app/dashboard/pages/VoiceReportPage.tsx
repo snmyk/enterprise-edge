@@ -2,7 +2,9 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, TextInput, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
-import { Mic, ArrowLeft, Send, MapPin, AlertTriangle, Play, Square, Waveform } from 'lucide-react-native';
+import { Mic, ArrowLeft, Send, MapPin, AlertTriangle, Play, Square } from 'lucide-react-native';
+import Header from '../../../components/Header';
+import BottomNavigation from '../../../components/BottomNavigation';
 
 const VoiceReportPage = () => {
   const router = useRouter();
@@ -65,14 +67,7 @@ const VoiceReportPage = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.header}>
-        <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
-          <ArrowLeft size={24} color="#111827" />
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>Voice Report</Text>
-        <View style={styles.headerSpacer} />
-      </View>
-
+      <Header />
       <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
         <View style={styles.content}>
           <View style={styles.recordingSection}>
@@ -100,37 +95,25 @@ const VoiceReportPage = () => {
                   <Text style={styles.recordButtonSubtext}>
                     {isRecording ? 'Tap to stop' : 'Tap to start recording'}
                   </Text>
-                  {isRecording && (
-                    <View style={styles.recordingIndicator}>
-                      <Waveform size={20} color="#EF4444" />
-                      <Text style={styles.recordingText}>Recording...</Text>
-                    </View>
-                  )}
                 </TouchableOpacity>
               ) : (
                 <View style={styles.playbackContainer}>
-                  <View style={styles.audioVisualizer}>
-                    <Waveform size={48} color="#3B82F6" />
-                    <Text style={styles.audioText}>Audio Recording</Text>
-                    <Text style={styles.audioDuration}>0:15</Text>
+                  <TouchableOpacity style={styles.playButton} onPress={handlePlayRecording}>
+                    <Play size={24} color="#3B82F6" />
+                  </TouchableOpacity>
+                  <View style={styles.playbackInfo}>
+                    <Text style={styles.playbackText}>Recording saved</Text>
+                    <Text style={styles.playbackDuration}>{recordingDuration}s</Text>
                   </View>
-                  <View style={styles.playbackControls}>
-                    <TouchableOpacity style={styles.playButton} onPress={handlePlayRecording}>
-                      <Play size={20} color="#FFFFFF" />
-                      <Text style={styles.playButtonText}>Play</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity style={styles.deleteButton} onPress={handleDeleteRecording}>
-                      <Text style={styles.deleteButtonText}>Delete</Text>
-                    </TouchableOpacity>
-                  </View>
+                  <TouchableOpacity style={styles.deleteButton} onPress={handleDeleteRecording}>
+                    <Square size={20} color="#EF4444" />
+                  </TouchableOpacity>
                 </View>
               )}
             </View>
           </View>
 
           <View style={styles.formSection}>
-            <Text style={styles.sectionTitle}>Additional Details</Text>
-            
             <View style={styles.inputContainer}>
               <Text style={styles.inputLabel}>Location</Text>
               <View style={styles.inputWrapper}>
@@ -146,12 +129,12 @@ const VoiceReportPage = () => {
             </View>
 
             <View style={styles.inputContainer}>
-              <Text style={styles.inputLabel}>Text Description (Optional)</Text>
+              <Text style={styles.inputLabel}>Additional Description (Optional)</Text>
               <View style={styles.inputWrapper}>
                 <AlertTriangle size={20} color="#6B7280" style={styles.inputIcon} />
                 <TextInput
                   style={[styles.textInput, styles.textArea]}
-                  placeholder="Add any additional text details..."
+                  placeholder="Add any additional details..."
                   value={description}
                   onChangeText={setDescription}
                   placeholderTextColor="#9CA3AF"
@@ -162,25 +145,14 @@ const VoiceReportPage = () => {
               </View>
             </View>
 
-            <View style={styles.tipsContainer}>
-              <Text style={styles.tipsTitle}>🎤 Voice Recording Tips:</Text>
-              <Text style={styles.tipsText}>• Speak clearly and slowly</Text>
-              <Text style={styles.tipsText}>• Describe the issue in detail</Text>
-              <Text style={styles.tipsText}>• Mention the location and time</Text>
-              <Text style={styles.tipsText}>• Keep recordings under 2 minutes</Text>
-            </View>
-
-            <TouchableOpacity 
-              style={[styles.submitButton, !hasRecording && styles.submitButtonDisabled]} 
-              onPress={handleSubmitReport}
-              disabled={!hasRecording}
-            >
+            <TouchableOpacity style={styles.submitButton} onPress={handleSubmitReport}>
               <Send size={20} color="#FFFFFF" />
-              <Text style={styles.submitButtonText}>Submit Voice Report</Text>
+              <Text style={styles.submitButtonText}>Submit Report</Text>
             </TouchableOpacity>
           </View>
         </View>
       </ScrollView>
+      <BottomNavigation />
     </SafeAreaView>
   );
 };
@@ -287,9 +259,6 @@ const styles = StyleSheet.create({
     color: '#EF4444',
     fontWeight: '500',
   },
-  playbackContainer: {
-    alignItems: 'center',
-  },
   audioVisualizer: {
     alignItems: 'center',
     marginBottom: 20,
@@ -310,30 +279,41 @@ const styles = StyleSheet.create({
     gap: 16,
   },
   playButton: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    backgroundColor: '#F3F4F6',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  playbackContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#3B82F6',
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 20,
-    gap: 4,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 16,
+    padding: 20,
+    gap: 16,
   },
-  playButtonText: {
-    fontSize: 14,
+  playbackInfo: {
+    flex: 1,
+  },
+  playbackText: {
+    fontSize: 16,
     fontWeight: '500',
-    color: '#FFFFFF',
+    color: '#111827',
+    marginBottom: 4,
+  },
+  playbackDuration: {
+    fontSize: 14,
+    color: '#6B7280',
   },
   deleteButton: {
-    paddingHorizontal: 16,
-    paddingVertical: 8,
+    width: 40,
+    height: 40,
     borderRadius: 20,
-    borderWidth: 1,
-    borderColor: '#EF4444',
-  },
-  deleteButtonText: {
-    fontSize: 14,
-    fontWeight: '500',
-    color: '#EF4444',
+    backgroundColor: '#FEF2F2',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   formSection: {
     flex: 1,
