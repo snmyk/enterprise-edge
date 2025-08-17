@@ -3,6 +3,8 @@ import { View, Text, StyleSheet, TouchableOpacity, ScrollView, TextInput, Alert,
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { Camera, ArrowLeft, Send, MapPin, AlertTriangle, Image as ImageIcon, X } from 'lucide-react-native';
+import Header from '../../../components/Header';
+import BottomNavigation from '../../../components/BottomNavigation';
 
 const PhotoReportPage = () => {
   const router = useRouter();
@@ -63,14 +65,7 @@ const PhotoReportPage = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.header}>
-        <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
-          <ArrowLeft size={24} color="#111827" />
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>Photo Report</Text>
-        <View style={styles.headerSpacer} />
-      </View>
-
+      <Header />
       <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
         <View style={styles.content}>
           <View style={styles.photoSection}>
@@ -102,8 +97,6 @@ const PhotoReportPage = () => {
           </View>
 
           <View style={styles.formSection}>
-            <Text style={styles.sectionTitle}>Report Details</Text>
-            
             <View style={styles.inputContainer}>
               <Text style={styles.inputLabel}>Location</Text>
               <View style={styles.inputWrapper}>
@@ -124,7 +117,7 @@ const PhotoReportPage = () => {
                 <AlertTriangle size={20} color="#6B7280" style={styles.inputIcon} />
                 <TextInput
                   style={[styles.textInput, styles.textArea]}
-                  placeholder="Describe the waste issue in detail..."
+                  placeholder="Describe the waste issue..."
                   value={description}
                   onChangeText={setDescription}
                   placeholderTextColor="#9CA3AF"
@@ -135,25 +128,14 @@ const PhotoReportPage = () => {
               </View>
             </View>
 
-            <View style={styles.tipsContainer}>
-              <Text style={styles.tipsTitle}>📸 Photo Tips:</Text>
-              <Text style={styles.tipsText}>• Ensure good lighting</Text>
-              <Text style={styles.tipsText}>• Include the full issue in frame</Text>
-              <Text style={styles.tipsText}>• Avoid blurry images</Text>
-              <Text style={styles.tipsText}>• Show the surrounding area</Text>
-            </View>
-
-            <TouchableOpacity 
-              style={[styles.submitButton, !photo && styles.submitButtonDisabled]} 
-              onPress={handleSubmitReport}
-              disabled={!photo}
-            >
+            <TouchableOpacity style={styles.submitButton} onPress={handleSubmitReport}>
               <Send size={20} color="#FFFFFF" />
-              <Text style={styles.submitButtonText}>Submit Photo Report</Text>
+              <Text style={styles.submitButtonText}>Submit Report</Text>
             </TouchableOpacity>
           </View>
         </View>
       </ScrollView>
+      <BottomNavigation />
     </SafeAreaView>
   );
 };

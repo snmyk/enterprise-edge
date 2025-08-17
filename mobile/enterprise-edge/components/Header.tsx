@@ -1,8 +1,15 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Coins, User } from 'lucide-react-native';
+import { useRouter } from 'expo-router';
 
 export default function Header() {
+  const router = useRouter();
+
+  const handleProfilePress = () => {
+    router.push('/(tabs)/ProfileScreen');
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.leftSection}>
@@ -20,7 +27,7 @@ export default function Header() {
           <Coins size={16} color="#F59E0B" />
           <Text style={styles.pointsText}>1250</Text>
         </View>
-        <TouchableOpacity style={styles.profileButton}>
+        <TouchableOpacity style={styles.profileButton} onPress={handleProfilePress}>
           <User size={20} color="#6B7280" />
         </TouchableOpacity>
       </View>

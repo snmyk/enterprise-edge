@@ -3,6 +3,8 @@ import { View, Text, StyleSheet, TouchableOpacity, ScrollView, TextInput, Alert 
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { Edit3, ArrowLeft, Send, MapPin, AlertTriangle, FileText, CheckCircle } from 'lucide-react-native';
+import Header from '../../../components/Header';
+import BottomNavigation from '../../../components/BottomNavigation';
 
 const TextReportPage = () => {
   const router = useRouter();
@@ -66,14 +68,7 @@ const TextReportPage = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.header}>
-        <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
-          <ArrowLeft size={24} color="#111827" />
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>Text Report</Text>
-        <View style={styles.headerSpacer} />
-      </View>
-
+      <Header />
       <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
         <View style={styles.content}>
           <View style={styles.introSection}>
@@ -216,6 +211,7 @@ const TextReportPage = () => {
           </View>
         </View>
       </ScrollView>
+      <BottomNavigation />
     </SafeAreaView>
   );
 };

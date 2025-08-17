@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, Platform, Dimensions } from "react-native";
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, Platform, Dimensions, ScrollView } from "react-native";
 import { MaterialIcons, Ionicons, FontAwesome } from '@expo/vector-icons';
 import * as Location from 'expo-location';
 import AddPhotoButton from "./components/addPhotoButton";
 import VoiceReport from "./components/voice-report";
 import LocationSearch from "../../components/LocationSearch"; 
+import { Colors } from "../../constants/Colors";
 
 export default function DashBoard() {
   const [activeTab, setActiveTab] = useState('Home');
@@ -49,26 +50,61 @@ export default function DashBoard() {
     switch (activeTab) {
       case 'Home':
         return (
-          <>
-            <AddPhotoButton 
-              onImageCaptured={handleImageCaptured}
-              onImageRemoved={handleImageRemoved}
-              imageUri={capturedImageUri}
-            />
+          <ScrollView 
+            style={styles.scrollContainer}
+            contentContainerStyle={styles.scrollContent}
+            showsVerticalScrollIndicator={false}
+          >
+            {/* Header Section */}
+            <View style={styles.headerSection}>
+              <Text style={styles.headerTitle}>Report Waste Issue</Text>
+              <Text style={styles.headerSubtitle}>
+                Help keep our community clean by reporting waste issues
+              </Text>
+            </View>
 
-            {!shouldShowLocationSearch && (
-              <VoiceReport onVoiceRecorded={handleVoiceRecorded} />
-            )}
+            {/* Progress Indicator */}
+            <View style={styles.progressContainer}>
+              <View style={styles.progressStep}>
+                <View style={[styles.progressDot, (hasPhoto || hasVoiceNote) && styles.progressDotActive]} />
+                <Text style={styles.progressText}>Add Media</Text>
+              </View>
+              <View style={[styles.progressLine, shouldShowLocationSearch && styles.progressLineActive]} />
+              <View style={styles.progressStep}>
+                <View style={[styles.progressDot, shouldShowLocationSearch && styles.progressDotActive]} />
+                <Text style={styles.progressText}>Location</Text>
+              </View>
+            </View>
 
-            {/* Location Section - Only show after photo or voice recording */}
-            {shouldShowLocationSearch && (
-              <LocationSearch
-                onLocationChange={handleLocationChange}
-                initialAddress={locationData.address}
-                containerStyle={styles.locationContainer}
+            {/* Content Sections */}
+            <View style={styles.contentContainer}>
+              <AddPhotoButton 
+                onImageCaptured={handleImageCaptured}
+                onImageRemoved={handleImageRemoved}
+                imageUri={capturedImageUri}
+                locationData={locationData}
               />
-            )}
-          </>
+
+              {!shouldShowLocationSearch && (
+                <VoiceReport onVoiceRecorded={handleVoiceRecorded} />
+              )}
+
+              {/* Location Section - Only show after photo or voice recording */}
+              {shouldShowLocationSearch && (
+                <View style={styles.locationSection}>
+                  <Text style={styles.sectionTitle}>Location Details</Text>
+                  <Text style={styles.sectionSubtitle}>
+                    Please provide the location where you found the waste issue
+                  </Text>
+                  <LocationSearch
+                    onLocationChange={handleLocationChange}
+                    initialAddress={locationData.address}
+                    containerStyle={styles.locationContainer}
+                  />
+                </View>
+              )}
+            </View>
+          </ScrollView>
         );
       default:
         return null;
@@ -85,16 +121,89 @@ export default function DashBoard() {
 
 const styles = StyleSheet.create({
   container: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    flexDirection: 'column',
     flex: 1,
-    backgroundColor: 'red',
-    paddingBottom: 80, // Add padding to prevent content from being hidden behind sticky navigation
-    height: '100%',
+    backgroundColor: Colors.light.background,
+  },
+  scrollContainer: {
+    flex: 1,
+  },
+  scrollContent: {
+    paddingBottom: 100, // Add padding to prevent content from being hidden behind sticky navigation
+  },
+  headerSection: {
+    paddingHorizontal: 20,
+    paddingTop: 20,
+    paddingBottom: 16,
+    backgroundColor: Colors.light.background,
+  },
+  headerTitle: {
+    fontSize: 24,
+    fontWeight: '700',
+    color: Colors.light.text,
+    marginBottom: 8,
+    textAlign: 'center',
+  },
+  headerSubtitle: {
+    fontSize: 16,
+    color: '#687076',
+    textAlign: 'center',
+    lineHeight: 22,
+  },
+  progressContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 40,
+    paddingVertical: 20,
+  },
+  progressStep: {
+    alignItems: 'center',
+    flex: 1,
+  },
+  progressDot: {
+    width: 12,
+    height: 12,
+    borderRadius: 6,
+    backgroundColor: '#E1E5E9',
+    marginBottom: 8,
+  },
+  progressDotActive: {
+    backgroundColor: Colors.light.tint,
+  },
+  progressText: {
+    fontSize: 12,
+    color: '#687076',
+    fontWeight: '500',
+  },
+  progressLine: {
+    height: 2,
+    flex: 1,
+    backgroundColor: '#E1E5E9',
+    marginHorizontal: 8,
+  },
+  progressLineActive: {
+    backgroundColor: Colors.light.tint,
+  },
+  contentContainer: {
+    flex: 1,
+    paddingHorizontal: 16,
+  },
+  locationSection: {
+    marginTop: 20,
+  },
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: Colors.light.text,
+    marginBottom: 8,
+  },
+  sectionSubtitle: {
+    fontSize: 14,
+    color: '#687076',
+    marginBottom: 16,
+    lineHeight: 20,
   },
   locationContainer: {
-    marginHorizontal: 20, // Add some horizontal margin if needed
+    marginTop: 8,
   },
 });

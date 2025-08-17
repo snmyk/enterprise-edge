@@ -4,13 +4,19 @@ import { MaterialIcons } from '@expo/vector-icons';
 import RewardsSection from '@/components/RewardsSection';
 import CollectionPoints from '@/components/CollectionPoints';
 import RecentReports from '@/components/RecentReports';
+import Header from '../../../components/Header';
+import BottomNavigation from '../../../components/BottomNavigation';
 
 const RewardsPage = () => {
   return (
     <View style={styles.container}>
-      <RewardsSection />
-      <CollectionPoints />
-      <RecentReports />
+      <Header />
+      <View style={styles.content}>
+        <RewardsSection />
+        <CollectionPoints />
+        <RecentReports />
+      </View>
+      <BottomNavigation />
     </View>
   );
 };
@@ -19,6 +25,9 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: 'white',
+  },
+  content: {
+    flex: 1,
     padding: 20,
   },
   pageTitle: {

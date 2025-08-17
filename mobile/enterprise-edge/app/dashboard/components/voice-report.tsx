@@ -1,9 +1,8 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Modal, ScrollView, Alert, Animated, Easing } from 'react-native';
 import { MaterialIcons, FontAwesome, Feather } from '@expo/vector-icons';
 import { Audio } from 'expo-av';
-
+ 
 type Recording = {
   id: string;
   timestamp: Date;
@@ -12,11 +11,11 @@ type Recording = {
   language: string;
   audioUri?: string;
 };
-
+ 
 interface VoiceReportProps {
   onVoiceRecorded?: () => void; // Add callback prop
 }
-
+ 
 const languages = [
   { code: 'en-US', name: 'English' },
   { code: 'af-ZA', name: 'Afrikaans' },
@@ -24,14 +23,14 @@ const languages = [
   { code: 'xh-ZA', name: 'Xhosa' },
   { code: 'st-ZA', name: 'Sotho' }
 ];
-
+ 
 // Sound wave bar component
 const SoundWaveBar = ({ height, animationValue }: { height: number, animationValue: Animated.Value }) => {
   const animatedHeight = animationValue.interpolate({
     inputRange: [0, 0.5, 1],
     outputRange: [height * 0.3, height, height * 0.3],
   });
-
+ 
   return (
     <Animated.View
       style={{
@@ -44,7 +43,7 @@ const SoundWaveBar = ({ height, animationValue }: { height: number, animationVal
     />
   );
 };
-
+ 
 const VoiceReport: React.FC<VoiceReportProps> = ({ onVoiceRecorded }) => {
   const [selectedLanguage, setSelectedLanguage] = useState(languages[0]);
   const [isRecording, setIsRecording] = useState(false);
@@ -55,17 +54,17 @@ const VoiceReport: React.FC<VoiceReportProps> = ({ onVoiceRecorded }) => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [playbackPosition, setPlaybackPosition] = useState(0);
   const [playbackDuration, setPlaybackDuration] = useState(0);
-  
+ 
   // Sound animation refs
   const soundAnimations = useRef<Animated.Value[]>([]);
   const soundAnimationLoop = useRef<Animated.CompositeAnimation | null>(null);
   const soundRef = useRef<Audio.Sound | null>(null);
-  
+ 
   // Initialize sound wave animations
   useEffect(() => {
     soundAnimations.current = Array(10).fill(0).map(() => new Animated.Value(0));
   }, []);
-
+ 
   // Cleanup on unmount
   useEffect(() => {
     return () => {
@@ -80,14 +79,14 @@ const VoiceReport: React.FC<VoiceReportProps> = ({ onVoiceRecorded }) => {
       }
     };
   }, [recording]);
-
+ 
   // Start sound wave animation
   const startSoundAnimation = () => {
     // Stop any existing animation
     if (soundAnimationLoop.current) {
       soundAnimationLoop.current.stop();
     }
-
+ 
     // Create animations for each bar with random timing
     const animations = soundAnimations.current.map((anim, index) => {
       return Animated.loop(
@@ -107,12 +106,12 @@ const VoiceReport: React.FC<VoiceReportProps> = ({ onVoiceRecorded }) => {
         ])
       );
     });
-
+ 
     // Start all animations
     soundAnimationLoop.current = Animated.parallel(animations);
     soundAnimationLoop.current.start();
   };
-
+ 
   // Stop sound wave animation
   const stopSoundAnimation = () => {
     if (soundAnimationLoop.current) {
@@ -120,7 +119,7 @@ const VoiceReport: React.FC<VoiceReportProps> = ({ onVoiceRecorded }) => {
       soundAnimations.current.forEach(anim => anim.setValue(0));
     }
   };
-
+ 
   const startRecording = async () => {
     try {
       await Audio.requestPermissionsAsync();
@@ -128,14 +127,14 @@ const VoiceReport: React.FC<VoiceReportProps> = ({ onVoiceRecorded }) => {
         allowsRecordingIOS: true,
         playsInSilentModeIOS: true,
       });
-
+ 
       const { recording: newRecording } = await Audio.Recording.createAsync(
         Audio.RecordingOptionsPresets.HIGH_QUALITY
       );
-
+ 
       setRecording(newRecording);
       setIsRecording(true);
-
+ 
       const newRecordingData: Recording = {
         id: Date.now().toString(),
         timestamp: new Date(),
@@ -143,49 +142,49 @@ const VoiceReport: React.FC<VoiceReportProps> = ({ onVoiceRecorded }) => {
         transcript: '',
         language: selectedLanguage.name,
       };
-
+ 
       setCurrentRecording(newRecordingData);
-      
+     
       // Start sound wave animation
       startSoundAnimation();
-
+ 
     } catch (err) {
       console.error('Failed to start recording', err);
       Alert.alert('Error', 'Failed to start recording');
     }
   };
-
+ 
   const stopRecording = async () => {
     try {
       if (!recording) return;
-
+ 
       setIsRecording(false);
       setIsRecognizing(true);
-      
+     
       // Stop sound wave animation
       stopSoundAnimation();
-
+ 
       await recording.stopAndUnloadAsync();
       const uri = recording.getURI();
-
+ 
       if (uri && currentRecording) {
         // Update the current recording with audio URI
         const updatedRecording = {
           ...currentRecording,
           audioUri: uri
         };
-
+ 
         setCurrentRecording(updatedRecording);
-
+ 
         // Start speech recognition
         await recognizeSpeech(uri, selectedLanguage.code);
-
+ 
         // Notify parent component that voice has been recorded
         if (onVoiceRecorded) {
           onVoiceRecorded();
         }
       }
-
+ 
       setRecording(null);
     } catch (err) {
       console.error('Failed to stop recording', err);
@@ -194,13 +193,13 @@ const VoiceReport: React.FC<VoiceReportProps> = ({ onVoiceRecorded }) => {
       setIsRecognizing(false);
     }
   };
-
+ 
   const recognizeSpeech = async (uri: string, languageCode: string) => {
     try {
       // For now, we'll just store the audio recording
       // Speech recognition can be implemented later with a proper service
       // like Google Cloud Speech-to-Text or Azure Speech Services
-
+ 
       if (currentRecording) {
         setCurrentRecording(prev => ({
           ...prev!,
@@ -212,7 +211,7 @@ const VoiceReport: React.FC<VoiceReportProps> = ({ onVoiceRecorded }) => {
       // Don't show error alert since we're not doing actual transcription
     }
   };
-
+ 
   const playRecording = async (audioUri: string) => {
     try {
       // If already playing, pause it
@@ -222,7 +221,7 @@ const VoiceReport: React.FC<VoiceReportProps> = ({ onVoiceRecorded }) => {
         stopSoundAnimation();
         return;
       }
-      
+     
       // If we have a sound object but it's paused, resume it
       if (soundRef.current) {
         await soundRef.current.playAsync();
@@ -230,18 +229,18 @@ const VoiceReport: React.FC<VoiceReportProps> = ({ onVoiceRecorded }) => {
         startSoundAnimation();
         return;
       }
-      
+     
       // Otherwise create a new sound object
       const { sound } = await Audio.Sound.createAsync(
         { uri: audioUri },
         { shouldPlay: true },
         onPlaybackStatusUpdate
       );
-      
+     
       soundRef.current = sound;
       setIsPlaying(true);
       startSoundAnimation();
-      
+     
       // When playback finishes
       sound.setOnPlaybackStatusUpdate(status => {
         if (status.isLoaded) {
@@ -260,7 +259,7 @@ const VoiceReport: React.FC<VoiceReportProps> = ({ onVoiceRecorded }) => {
       Alert.alert('Error', 'Failed to play recording');
     }
   };
-  
+ 
   // Playback status update handler
   const onPlaybackStatusUpdate = (status: any) => {
     if (status.isLoaded) {
@@ -268,7 +267,7 @@ const VoiceReport: React.FC<VoiceReportProps> = ({ onVoiceRecorded }) => {
       setPlaybackDuration(status.durationMillis || 1);
     }
   };
-
+ 
   const deleteRecording = () => {
     // Clean up sound if it exists
     if (soundRef.current) {
@@ -279,7 +278,7 @@ const VoiceReport: React.FC<VoiceReportProps> = ({ onVoiceRecorded }) => {
     stopSoundAnimation();
     setCurrentRecording(null);
   };
-
+ 
   // Update recording duration while recording
   useEffect(() => {
     let interval: number;
@@ -292,11 +291,11 @@ const VoiceReport: React.FC<VoiceReportProps> = ({ onVoiceRecorded }) => {
       if (interval) clearInterval(interval);
     };
   }, [isRecording, currentRecording]);
-
+ 
   return (
     <View style={styles.container}>
       <Text style={styles.header}>Voice Report</Text>
-
+ 
       {/* Language Selection */}
       <TouchableOpacity
         style={styles.languageButton}
@@ -309,7 +308,7 @@ const VoiceReport: React.FC<VoiceReportProps> = ({ onVoiceRecorded }) => {
         </View>
         <MaterialIcons name="arrow-drop-down" size={24} color="black" />
       </TouchableOpacity>
-
+ 
       {/* Recording Button */}
       <TouchableOpacity
         style={[styles.recordButton, isRecording && styles.recordingButton]}
@@ -322,25 +321,25 @@ const VoiceReport: React.FC<VoiceReportProps> = ({ onVoiceRecorded }) => {
           <FontAwesome name="microphone" size={32} color="white" />
         )}
       </TouchableOpacity>
-
+ 
       {/* Sound Wave Visualization - Only show when recording */}
       {isRecording && (
         <View style={styles.soundWaveContainer}>
           {soundAnimations.current.map((anim, index) => (
-            <SoundWaveBar 
-              key={index} 
-              height={30 + Math.random() * 20} 
-              animationValue={anim} 
+            <SoundWaveBar
+              key={index}
+              height={30 + Math.random() * 20}
+              animationValue={anim}
             />
           ))}
         </View>
       )}
-
+ 
       {/* Instructions */}
       <Text style={styles.instructionText}>
         {isRecording ? 'Recording in progress...' : 'Tap the microphone to start recording'}
       </Text>
-
+ 
       {/* Current Recording Display */}
       {currentRecording && (
         <View style={styles.recordingItem}>
@@ -354,12 +353,12 @@ const VoiceReport: React.FC<VoiceReportProps> = ({ onVoiceRecorded }) => {
             ) : (
               <Text style={styles.processingText}>Audio recorded successfully</Text>
             )}
-            
+           
             {/* Audio Player UI */}
             {currentRecording.audioUri && (
               <View style={styles.audioPlayerContainer}>
                 {/* Play/Pause Button */}
-                <TouchableOpacity 
+                <TouchableOpacity
                   onPress={() => playRecording(currentRecording.audioUri!)}
                   style={styles.playPauseButton}
                 >
@@ -369,25 +368,25 @@ const VoiceReport: React.FC<VoiceReportProps> = ({ onVoiceRecorded }) => {
                     color="#4CAF50"
                   />
                 </TouchableOpacity>
-                
+               
                 {/* Progress Bar */}
                 <View style={styles.progressBarContainer}>
-                  <View 
+                  <View
                     style={[
-                      styles.progressBar, 
+                      styles.progressBar,
                       { width: `${(playbackPosition / playbackDuration) * 100}%` }
-                    ]} 
+                    ]}
                   />
                 </View>
-                
+               
                 {/* Sound Wave Visualization for Playback */}
                 {isPlaying && (
                   <View style={styles.playbackWaveContainer}>
                     {soundAnimations.current.map((anim, index) => (
-                      <SoundWaveBar 
-                        key={index} 
-                        height={15 + Math.random() * 10} 
-                        animationValue={anim} 
+                      <SoundWaveBar
+                        key={index}
+                        height={15 + Math.random() * 10}
+                        animationValue={anim}
                       />
                     ))}
                   </View>
@@ -395,7 +394,7 @@ const VoiceReport: React.FC<VoiceReportProps> = ({ onVoiceRecorded }) => {
               </View>
             )}
           </View>
-          
+         
           <View style={styles.recordingActions}>
             <TouchableOpacity onPress={deleteRecording}>
               <Feather name="trash-2" size={20} color="#F44336" style={styles.actionIcon} />
@@ -403,7 +402,7 @@ const VoiceReport: React.FC<VoiceReportProps> = ({ onVoiceRecorded }) => {
           </View>
         </View>
       )}
-
+ 
       {/* Language Selection Modal */}
       <Modal
         visible={showLanguageModal}
@@ -435,7 +434,7 @@ const VoiceReport: React.FC<VoiceReportProps> = ({ onVoiceRecorded }) => {
     </View>
   );
 };
-
+ 
 const styles = StyleSheet.create({
   container: {
     backgroundColor: 'white',
@@ -625,5 +624,5 @@ const styles = StyleSheet.create({
     marginTop: 5,
   },
 });
-
+ 
 export default VoiceReport;
