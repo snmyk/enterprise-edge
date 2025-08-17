@@ -12,6 +12,10 @@ type Recording = {
   audioUri?: string;
 };
 
+interface VoiceReportProps {
+  onVoiceRecorded?: () => void; // Add callback prop
+}
+
 const languages = [
   { code: 'en-US', name: 'English' },
   { code: 'af-ZA', name: 'Afrikaans' },
@@ -20,7 +24,7 @@ const languages = [
   { code: 'st-ZA', name: 'Sotho' }
 ];
 
-const VoiceReport = () => {
+const VoiceReport: React.FC<VoiceReportProps> = ({ onVoiceRecorded }) => {
   const [selectedLanguage, setSelectedLanguage] = useState(languages[0]);
   const [isRecording, setIsRecording] = useState(false);
   const [currentRecording, setCurrentRecording] = useState<Recording | null>(null);
@@ -88,6 +92,11 @@ const VoiceReport = () => {
 
         // Start speech recognition
         await recognizeSpeech(uri, selectedLanguage.code);
+
+        // Notify parent component that voice has been recorded
+        if (onVoiceRecorded) {
+          onVoiceRecorded();
+        }
       }
 
       setRecording(null);
