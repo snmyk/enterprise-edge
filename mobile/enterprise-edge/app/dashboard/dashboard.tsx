@@ -7,6 +7,7 @@ import VoiceReport from "./components/voice-report";
 import TrashPickupReminder from "../../components/TrashPickupReminder"; // Import the new component
 import LocationSearch from "../../components/LocationSearch";
 import { Colors } from "../../constants/Colors";
+import { router } from "expo-router";
 
 // Define the props interface
 interface DashBoardProps {
@@ -58,6 +59,7 @@ export default function DashBoard({ currentPoints, onPointsUpdate }: DashBoardPr
     // Add points for submitting a report
     const pointsToAdd = 50; // or whatever logic you have
     onPointsUpdate(currentPoints + pointsToAdd);
+    router.navigate("../(tabs)/ReportsScreen"); // Navigate to home after submission
   };
 
   const renderPageContent = () => {

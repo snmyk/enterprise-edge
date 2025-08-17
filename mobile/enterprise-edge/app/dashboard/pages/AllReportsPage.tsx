@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useReports } from '../../shared/ReportsContext';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Image, TextInput } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
@@ -6,11 +7,11 @@ import { Camera, Mic, MapPin, Clock, Search, Filter, ArrowLeft, Calendar } from 
 import Header from '../../../components/Header';
 import BottomNavigation from '../../../components/BottomNavigation';
 
-export default function AllReportsPage() {
+export default function AllReportsPage({uploadedReports}: {uploadedReports: any[]}) {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedFilter, setSelectedFilter] = useState('all');
   const router = useRouter();
-  const allReports = [
+  const hardcodedReports = [
     {
       id: 1,
       title: 'Overflowing Bin',
@@ -116,6 +117,7 @@ export default function AllReportsPage() {
       image: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400',
     },
   ];
+  const allReports = [...uploadedReports, ...hardcodedReports].slice(0, 3);
 
   const filters = [
     { id: 'all', label: 'All', count: allReports.length },

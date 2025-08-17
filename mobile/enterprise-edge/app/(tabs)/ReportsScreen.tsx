@@ -1,4 +1,5 @@
 import React from 'react';
+import { useReports } from '../shared/ReportsContext';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Image } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
@@ -8,6 +9,7 @@ import BottomNavigation from '@/components/BottomNavigation';
 
 export default function ReportsScreen() {
   const router = useRouter();
+  const { uploadedReports } = useReports();
 
   const reportTypes = [
     {
@@ -30,7 +32,7 @@ export default function ReportsScreen() {
     },
   ];
 
-  const recentReports = [
+  const hardcodedReports = [
     {
       id: 1,
       title: 'Overflowing Bin',
@@ -46,7 +48,7 @@ export default function ReportsScreen() {
     },
     {
       id: 2,
-      title: 'illegal Dumping Site',
+      title: 'Illegal Dumping Site',
       location: 'Park Avenue',
       time: '1 day ago',
       status: 'Resolved',
@@ -57,7 +59,6 @@ export default function ReportsScreen() {
       points: 75,
       image: 'https://groundup.org.za/media/uploads/images/photographers/Chris%20Gilili/palm_springs_garbage.jpeg',
     },
-
     {
       id: 3,
       title: 'Recycling Bin Full',
@@ -73,11 +74,15 @@ export default function ReportsScreen() {
     },
   ];
 
+  // Combine uploaded reports (newest first) with hardcoded reports, then limit to 3
+  const recentReports = [...uploadedReports.reverse(), ...hardcodedReports].slice(0, 3);
+
+  // Update stats to include uploaded reports count
   const stats = {
-    totalReports: 35,
+    totalReports: 35 + uploadedReports.length,
     resolvedReports: 28,
-    pendingReports: 7,
-    totalPoints: 1250,
+    pendingReports: 7 + uploadedReports.length,
+    totalPoints: 1250 + (uploadedReports.length * 50), // Assume 50 points per uploaded report
     streak: 12,
   };
 
@@ -170,7 +175,13 @@ export default function ReportsScreen() {
                   onPress={() => handleReportPress(report)}
                 >
                   <View style={styles.reportImageContainer}>
-                    <Image source={{ uri: report.image }} style={styles.reportImage} />
+                    <Image 
+                      source={{ uri: report.image }} 
+                      style={styles.reportImage}
+                      onError={(error) => {
+                        console.log('Image load error:', error);
+                      }}
+                    />
                     <View style={[styles.typeBadge, { backgroundColor: report.typeColor + '20' }]}>
                       <report.typeIcon size={12} color={report.typeColor} />
                     </View>
@@ -213,6 +224,14 @@ export default function ReportsScreen() {
                 </TouchableOpacity>
               ))}
             </View>
+
+            {/* Show message if no reports */}
+            {recentReports.length === 0 && (
+              <View style={styles.noReportsContainer}>
+                <Text style={styles.noReportsText}>No reports yet</Text>
+                <Text style={styles.noReportsSubtext}>Start by taking a photo or recording a voice report</Text>
+              </View>
+            )}
           </View>
         </View>
       </ScrollView>
@@ -453,5 +472,20 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: '#6B7280',
     fontWeight: '500',
+  },
+  noReportsContainer: {
+    alignItems: 'center',
+    paddingVertical: 40,
+  },
+  noReportsText: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#6B7280',
+    marginBottom: 8,
+  },
+  noReportsSubtext: {
+    fontSize: 14,
+    color: '#9CA3AF',
+    textAlign: 'center',
   },
 });

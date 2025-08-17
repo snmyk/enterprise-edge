@@ -1,10 +1,13 @@
 import {  Image, Modal,  } from 'react-native';
+import { useReports } from '../../shared/ReportsContext';
 import React, { useState, useRef, useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Dimensions, StatusBar, Platform } from 'react-native';
 import { CameraView, useCameraPermissions } from 'expo-camera';
 import { Ionicons } from '@expo/vector-icons';
 import ImagePreview from '../../../components/ImagePreview';
 import { Colors } from '../../../constants/Colors';
+import { useReportStore } from '../../shared/reportStore'; // Adjust the import path as necessary
+
 
 interface AddPhotoButtonProps {
   onPress?: () => void;
@@ -26,6 +29,7 @@ const AddPhotoButton: React.FC<AddPhotoButtonProps> = ({
   onImageRemoved,
   locationData
 }) => {
+  const { addReport } = useReports();
   const [permission, requestPermission] = useCameraPermissions();
   const [showCamera, setShowCamera] = useState(false);
   const [imageUri, setImageUri] = useState<string | null>(initialImageUri || null);
@@ -54,11 +58,23 @@ const AddPhotoButton: React.FC<AddPhotoButtonProps> = ({
         });
         setImageUri(photo.uri);
         setShowCamera(false);
-        
-        // Show status bar again
         StatusBar.setHidden(false);
-        
         if (onImageCaptured) onImageCaptured(photo.uri);
+        // Add to reports context
+        addReport({
+          id: 0, // will be replaced in context
+          title: 'User Photo Report',
+          location: locationData?.address || 'Unknown',
+          time: 'Just now',
+          status: 'In Progress',
+          statusColor: '#F59E0B',
+          type: 'Photo',
+          typeIcon: require('lucide-react-native').Camera,
+          typeColor: '#10B981',
+          points: 50,
+          image: photo.uri,
+        });
+        
       } catch (error) {
         console.error('Error taking picture:', error);
       }
