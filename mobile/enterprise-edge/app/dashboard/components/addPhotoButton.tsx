@@ -1,4 +1,4 @@
-import { Image, Modal, } from 'react-native';
+import {  Image, Modal,  } from 'react-native';
 import React, { useState, useRef, useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Dimensions, StatusBar, Platform } from 'react-native';
 import { CameraView, useCameraPermissions } from 'expo-camera';
@@ -54,10 +54,10 @@ const AddPhotoButton: React.FC<AddPhotoButtonProps> = ({
         });
         setImageUri(photo.uri);
         setShowCamera(false);
-
+        
         // Show status bar again
         StatusBar.setHidden(false);
-
+        
         if (onImageCaptured) onImageCaptured(photo.uri);
       } catch (error) {
         console.error('Error taking picture:', error);
@@ -92,15 +92,15 @@ const AddPhotoButton: React.FC<AddPhotoButtonProps> = ({
 
   const uploadPicture = async () => {
     if (!imageUri) return;
-
+    
     setIsUploading(true);
     try {
       // Simulate upload process
       await new Promise(resolve => setTimeout(resolve, 2000));
-
+      
       // Here you would typically upload to your server
       console.log('Uploading image:', imageUri);
-
+      
       // Show success message or handle upload completion
       alert('Picture uploaded successfully!');
     } catch (error) {
@@ -112,7 +112,7 @@ const AddPhotoButton: React.FC<AddPhotoButtonProps> = ({
   };
 
   if (!permission) return <View />;
-
+  
   if (!permission.granted) {
     return (
       <View style={styles.permissionContainer}>
@@ -133,7 +133,7 @@ const AddPhotoButton: React.FC<AddPhotoButtonProps> = ({
   // Show image preview if image exists
   if (imageUri && !showCamera) {
     return (
-      <ImagePreview
+      <ImagePreview 
         imageUri={imageUri}
         onRetake={retakePicture}
         onRemove={removePicture}
@@ -148,47 +148,47 @@ const AddPhotoButton: React.FC<AddPhotoButtonProps> = ({
   if (showCamera) {
     return (
       <Modal visible={true} animationType="slide" transparent={false}>
-        <View style={styles.fullScreenCamera}>
-          <CameraView
-            style={styles.cameraView}
-            ref={cameraRef}
-            facing={facing}
-          >
-            <View style={styles.cameraControls}>
-              {/* Header Controls */}
-              <View style={styles.cameraHeader}>
-                <TouchableOpacity
-                  style={styles.headerButton}
-                  onPress={handleCloseCamera}
-                >
-                  <Ionicons name="close" size={24} color="white" />
-                </TouchableOpacity>
+      <View style={styles.fullScreenCamera}>
+        <CameraView
+          style={styles.cameraView}
+          ref={cameraRef}
+          facing={facing}
+        >
+          <View style={styles.cameraControls}>
+            {/* Header Controls */}
+            <View style={styles.cameraHeader}>
+              <TouchableOpacity 
+                style={styles.headerButton} 
+                onPress={handleCloseCamera}
+              >
+                <Ionicons name="close" size={24} color="white" />
+              </TouchableOpacity>
 
-                <TouchableOpacity style={styles.headerButton} onPress={toggleCamera}>
-                  <Ionicons name="camera-reverse" size={24} color="white" />
-                </TouchableOpacity>
-              </View>
+              <TouchableOpacity style={styles.headerButton} onPress={toggleCamera}>
+                <Ionicons name="camera-reverse" size={24} color="white" />
+              </TouchableOpacity>
+            </View>
 
-              {/* Camera Instructions */}
-              <View style={styles.instructionsContainer}>
-                <View style={styles.instructionsCard}>
-                  <Ionicons name="information-circle-outline" size={20} color="white" />
-                  <Text style={styles.instructionsText}>
-                    Position the waste issue in the center and tap the capture button
-                  </Text>
-                </View>
-              </View>
-
-              {/* Capture Button */}
-              <View style={styles.captureContainer}>
-                <TouchableOpacity style={styles.captureButton} onPress={takePicture}>
-                  <View style={styles.captureButtonInner} />
-                </TouchableOpacity>
-                <Text style={styles.captureText}>Tap to capture</Text>
+            {/* Camera Instructions */}
+            <View style={styles.instructionsContainer}>
+              <View style={styles.instructionsCard}>
+                <Ionicons name="information-circle-outline" size={20} color="white" />
+                <Text style={styles.instructionsText}>
+                  Position the waste issue in the center and tap the capture button
+                </Text>
               </View>
             </View>
-          </CameraView>
-        </View></Modal>
+
+            {/* Capture Button */}
+            <View style={styles.captureContainer}>
+              <TouchableOpacity style={styles.captureButton} onPress={takePicture}>
+                <View style={styles.captureButtonInner} />
+              </TouchableOpacity>
+              <Text style={styles.captureText}>Tap to capture</Text>
+            </View>
+          </View>
+        </CameraView>
+      </View></Modal>
     );
   }
 
@@ -214,7 +214,7 @@ const AddPhotoButton: React.FC<AddPhotoButtonProps> = ({
 };
 
 const styles = StyleSheet.create({
-  container: {
+  container: { 
     marginBottom: 16,
   },
   photoCard: {
@@ -244,16 +244,16 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginBottom: 16,
   },
-  title: {
-    fontSize: 18,
-    fontWeight: "600",
-    marginBottom: 8,
+  title: { 
+    fontSize: 18, 
+    fontWeight: "600", 
+    marginBottom: 8, 
     color: Colors.light.text,
     textAlign: 'center',
   },
-  subtitle: {
-    fontSize: 14,
-    color: '#687076',
+  subtitle: { 
+    fontSize: 14, 
+    color: '#687076', 
     marginBottom: 24,
     textAlign: 'center',
     lineHeight: 20,
@@ -278,14 +278,14 @@ const styles = StyleSheet.create({
     shadowRadius: 8,
     elevation: 4,
   },
-  buttonText: {
-    color: "white",
-    fontSize: 16,
-    fontWeight: "600"
+  buttonText: { 
+    color: "white", 
+    fontSize: 16, 
+    fontWeight: "600" 
   },
-  permissionContainer: {
-    flex: 1,
-    justifyContent: "center",
+  permissionContainer: { 
+    flex: 1, 
+    justifyContent: "center", 
     alignItems: "center",
     padding: 20,
   },
@@ -314,17 +314,17 @@ const styles = StyleSheet.create({
     marginBottom: 12,
     textAlign: 'center',
   },
-  permissionText: {
-    fontSize: 16,
-    marginBottom: 24,
+  permissionText: { 
+    fontSize: 16, 
+    marginBottom: 24, 
     color: '#687076',
     textAlign: 'center',
     lineHeight: 22,
   },
-  permissionButton: {
-    backgroundColor: Colors.light.tint,
+  permissionButton: { 
+    backgroundColor: Colors.light.tint, 
     paddingVertical: 14,
-    paddingHorizontal: 32,
+    paddingHorizontal: 32, 
     borderRadius: 12,
     shadowColor: Colors.light.tint,
     shadowOffset: {
@@ -335,8 +335,8 @@ const styles = StyleSheet.create({
     shadowRadius: 8,
     elevation: 4,
   },
-  permissionButtonText: {
-    color: "white",
+  permissionButtonText: { 
+    color: "white", 
     fontWeight: "600",
     fontSize: 16,
   },
@@ -369,7 +369,7 @@ const styles = StyleSheet.create({
     paddingTop: Platform.OS === 'ios' ? 60 : 40,
     paddingBottom: 20,
   },
-  headerButton: {
+  headerButton: { 
     backgroundColor: 'rgba(0,0,0,0.6)',
     borderRadius: 20,
     padding: 12,
@@ -424,11 +424,11 @@ const styles = StyleSheet.create({
     shadowRadius: 8,
     elevation: 8,
   },
-  captureButtonInner: {
-    width: 76,
-    height: 76,
-    borderRadius: 38,
-    backgroundColor: "white"
+  captureButtonInner: { 
+    width: 76, 
+    height: 76, 
+    borderRadius: 38, 
+    backgroundColor: "white" 
   },
   captureText: {
     color: 'white',
