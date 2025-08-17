@@ -4,7 +4,7 @@ import { MaterialIcons, Ionicons, FontAwesome } from '@expo/vector-icons';
 import * as Location from 'expo-location';
 import AddPhotoButton from "./components/addPhotoButton";
 import VoiceReport from "./components/voice-report";
-import LocationSearch from "../../components/LocationSearch"; 
+import LocationSearch from "../../components/LocationSearch";
 import { Colors } from "../../constants/Colors";
 
 export default function DashBoard() {
@@ -50,7 +50,7 @@ export default function DashBoard() {
     switch (activeTab) {
       case 'Home':
         return (
-          <ScrollView 
+          <ScrollView
             style={styles.scrollContainer}
             contentContainerStyle={styles.scrollContent}
             showsVerticalScrollIndicator={false}
@@ -64,7 +64,7 @@ export default function DashBoard() {
             </View>
 
             {/* Progress Indicator */}
-            <View style={styles.progressContainer}>
+            {/* <View style={styles.progressContainer}>
               <View style={styles.progressStep}>
                 <View style={[styles.progressDot, (hasPhoto || hasVoiceNote) && styles.progressDotActive]} />
                 <Text style={styles.progressText}>Add Media</Text>
@@ -74,11 +74,11 @@ export default function DashBoard() {
                 <View style={[styles.progressDot, shouldShowLocationSearch && styles.progressDotActive]} />
                 <Text style={styles.progressText}>Location</Text>
               </View>
-            </View>
+            </View> */}
 
             {/* Content Sections */}
             <View style={styles.contentContainer}>
-              <AddPhotoButton 
+              <AddPhotoButton
                 onImageCaptured={handleImageCaptured}
                 onImageRemoved={handleImageRemoved}
                 imageUri={capturedImageUri}
@@ -102,6 +102,12 @@ export default function DashBoard() {
                     containerStyle={styles.locationContainer}
                   />
                 </View>
+              )}
+              {capturedImageUri && locationData.address && (
+                <TouchableOpacity style={styles.button} onPress={() => { }}>
+                <Ionicons name="warning-outline" size={20} color="white" style={styles.icon} />
+                <Text style={styles.text}>Report Waste Issue</Text>
+              </TouchableOpacity>
               )}
             </View>
           </ScrollView>
@@ -205,5 +211,23 @@ const styles = StyleSheet.create({
   },
   locationContainer: {
     marginTop: 8,
+  },
+  button: {
+    backgroundColor: "#28a745", 
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: 14,
+    borderRadius: 6,
+    width: "100%",
+    marginTop: 13,
+  },
+  icon: {
+    marginRight: 8,
+  },
+  text: {
+    color: "white",
+    fontSize: 16,
+    fontWeight: "600",
   },
 });
