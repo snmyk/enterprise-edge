@@ -393,7 +393,7 @@ const VoiceReport: React.FC<VoiceReportProps> = ({ onVoiceRecorded }) => {
                 )}
               </View>
             )}
-          </View>
+          </View> 
          
           <View style={styles.recordingActions}>
             <TouchableOpacity onPress={deleteRecording}>

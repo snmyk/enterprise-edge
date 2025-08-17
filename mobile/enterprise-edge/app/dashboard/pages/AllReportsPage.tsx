@@ -7,10 +7,9 @@ import Header from '../../../components/Header';
 import BottomNavigation from '../../../components/BottomNavigation';
 
 export default function AllReportsPage() {
-  const router = useRouter();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedFilter, setSelectedFilter] = useState('all');
-
+  const router = useRouter();
   const allReports = [
     {
       id: 1,
@@ -145,12 +144,21 @@ export default function AllReportsPage() {
   };
 
   const handleBack = () => {
-    router.back();
+    router.navigate("../../ReportsScreen");
   };
 
   return (
     <SafeAreaView style={styles.container}>
-      <Header />
+      <Header currentPoints={1750} />
+      
+      {/* Custom header with back button */}
+      <View style={styles.header}>
+        <TouchableOpacity style={styles.backButton} onPress={handleBack}>
+          <ArrowLeft size={20} color="#111827" />
+        </TouchableOpacity>
+        <Text style={styles.headerTitle}>All Reports</Text>
+        <View style={styles.placeholder} />
+      </View>
 
       <View style={styles.searchContainer}>
         <View style={styles.searchInputContainer}>
@@ -272,7 +280,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#FFFFFF',
     paddingHorizontal: 16,
-    paddingVertical: 20,
+    paddingVertical: 16,
     borderBottomWidth: 1,
     borderBottomColor: '#E5E7EB',
   },
@@ -288,6 +296,9 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: '600',
     color: '#111827',
+  },
+  placeholder: {
+    width: 40, // Same width as back button to center the title
   },
   filterButton: {
     width: 40,
