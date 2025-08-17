@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, Platform } from "react-native";
-import { MaterialIcons } from '@expo/vector-icons';
+import { MaterialIcons, Ionicons } from '@expo/vector-icons';
 import * as Location from 'expo-location';
+import { Colors } from '../constants/Colors';
 
 interface LocationSearchProps {
   onLocationChange?: (location: Location.LocationObject | null, address: string) => void;
@@ -92,8 +93,16 @@ const LocationSearch: React.FC<LocationSearchProps> = ({
   };
 
   return (
-    <View style={[styles.locationSection, containerStyle]}>
-      <Text style={styles.sectionTitle}>Location Information</Text>
+    <View style={[styles.locationCard, containerStyle]}>
+      <View style={styles.header}>
+        <View style={styles.iconContainer}>
+          <Ionicons name="location" size={24} color={Colors.light.tint} />
+        </View>
+        <Text style={styles.title}>Location Details</Text>
+        <Text style={styles.subtitle}>
+          Provide the exact location where you found the waste issue
+        </Text>
+      </View>
 
       {/* Location Button */}
       <TouchableOpacity
@@ -114,34 +123,50 @@ const LocationSearch: React.FC<LocationSearchProps> = ({
       {/* Location Display */}
       {location && (
         <View style={styles.locationInfo}>
-          <Text style={styles.locationLabel}>Coordinates:</Text>
-          <Text style={styles.locationText}>
-            Lat: {location.coords.latitude.toFixed(6)}
-          </Text>
-          <Text style={styles.locationText}>
-            Long: {location.coords.longitude.toFixed(6)}
-          </Text>
-          <Text style={styles.locationText}>
-            Accuracy: {location.coords.accuracy?.toFixed(2)}m
-          </Text>
-
-          <TouchableOpacity
-            style={styles.clearButton}
-            onPress={clearLocation}
-          >
-            <Text style={styles.clearButtonText}>Clear Location</Text>
-          </TouchableOpacity>
+          <View style={styles.locationHeader}>
+            <Text style={styles.locationLabel}>Current Location</Text>
+            <TouchableOpacity
+              style={styles.clearButton}
+              onPress={clearLocation}
+            >
+              <Ionicons name="close-circle" size={20} color="#F44336" />
+            </TouchableOpacity>
+          </View>
+          <View style={styles.coordinatesContainer}>
+            <View style={styles.coordinateItem}>
+              <Text style={styles.coordinateLabel}>Latitude</Text>
+              <Text style={styles.coordinateValue}>
+                {location.coords.latitude.toFixed(6)}
+              </Text>
+            </View>
+            <View style={styles.coordinateItem}>
+              <Text style={styles.coordinateLabel}>Longitude</Text>
+              <Text style={styles.coordinateValue}>
+                {location.coords.longitude.toFixed(6)}
+              </Text>
+            </View>
+            <View style={styles.coordinateItem}>
+              <Text style={styles.coordinateLabel}>Accuracy</Text>
+              <Text style={styles.coordinateValue}>
+                {location.coords.accuracy?.toFixed(2)}m
+              </Text>
+            </View>
+          </View>
         </View>
       )}
 
       {/* Address Input */}
       <View style={styles.addressSection}>
-        <Text style={styles.addressLabel}>Specific Address:</Text>
+        <Text style={styles.addressLabel}>Specific Address</Text>
+        <Text style={styles.addressSubtitle}>
+          Add or edit the specific address details
+        </Text>
         <TextInput
           style={styles.addressInput}
           value={address}
           onChangeText={handleAddressChange}
-          placeholder="Enter or edit your specific address"
+          placeholder="Enter the exact address where you found the waste issue..."
+          placeholderTextColor="#9BA1A6"
           multiline
           numberOfLines={3}
           textAlignVertical="top"
@@ -152,28 +177,65 @@ const LocationSearch: React.FC<LocationSearchProps> = ({
 };
 
 const styles = StyleSheet.create({
-  locationSection: {
-    marginBottom: 20,
-    padding: 15,
-    backgroundColor: '#f8f9fa',
-    borderRadius: 10,
-    borderWidth: 1,
-    borderColor: '#e9ecef',
+  locationCard: {
+    backgroundColor: Colors.light.background,
+    borderRadius: 16,
+    padding: 24,
+    borderWidth: 2,
+    borderStyle: "dashed",
+    borderColor: '#E1E5E9',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.05,
+    shadowRadius: 8,
+    elevation: 2,
   },
-  sectionTitle: {
+  header: {
+    alignItems: 'center',
+    marginBottom: 24,
+  },
+  iconContainer: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    backgroundColor: '#F0F8FF',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 12,
+  },
+  title: {
     fontSize: 18,
     fontWeight: '600',
-    marginBottom: 15,
-    color: '#333',
+    color: Colors.light.text,
+    marginBottom: 4,
+    textAlign: 'center',
+  },
+  subtitle: {
+    fontSize: 14,
+    color: '#687076',
+    textAlign: 'center',
+    lineHeight: 20,
   },
   locationButton: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#007AFF',
-    padding: 12,
-    borderRadius: 8,
-    marginBottom: 15,
+    backgroundColor: Colors.light.tint,
+    paddingVertical: 14,
+    paddingHorizontal: 20,
+    borderRadius: 12,
+    marginBottom: 20,
+    shadowColor: Colors.light.tint,
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.2,
+    shadowRadius: 8,
+    elevation: 4,
   },
   locationButtonText: {
     color: 'white',
@@ -182,55 +244,72 @@ const styles = StyleSheet.create({
     marginLeft: 8,
   },
   locationInfo: {
-    backgroundColor: 'white',
-    padding: 15,
-    borderRadius: 8,
-    marginBottom: 15,
+    backgroundColor: '#F8F9FA',
+    padding: 16,
+    borderRadius: 12,
+    marginBottom: 20,
     borderWidth: 1,
-    borderColor: '#dee2e6',
+    borderColor: '#E1E5E9',
+  },
+  locationHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 12,
   },
   locationLabel: {
     fontSize: 16,
     fontWeight: '600',
-    marginBottom: 8,
-    color: '#333',
-  },
-  locationText: {
-    fontSize: 14,
-    color: '#666',
-    marginBottom: 4,
-    fontFamily: Platform.OS === 'ios' ? 'Menlo' : 'monospace',
+    color: Colors.light.text,
   },
   clearButton: {
-    backgroundColor: '#dc3545',
-    padding: 8,
-    borderRadius: 6,
-    alignSelf: 'flex-start',
-    marginTop: 10,
+    padding: 4,
   },
-  clearButtonText: {
-    color: 'white',
+  coordinatesContainer: {
+    gap: 8,
+  },
+  coordinateItem: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingVertical: 4,
+  },
+  coordinateLabel: {
     fontSize: 14,
+    color: '#687076',
+    fontWeight: '500',
+  },
+  coordinateValue: {
+    fontSize: 14,
+    color: Colors.light.text,
+    fontFamily: Platform.OS === 'ios' ? 'Menlo' : 'monospace',
     fontWeight: '500',
   },
   addressSection: {
-    marginTop: 10,
+    marginTop: 4,
   },
   addressLabel: {
     fontSize: 16,
     fontWeight: '600',
-    marginBottom: 8,
-    color: '#333',
+    marginBottom: 4,
+    color: Colors.light.text,
+  },
+  addressSubtitle: {
+    fontSize: 14,
+    color: '#687076',
+    marginBottom: 12,
+    lineHeight: 20,
   },
   addressInput: {
-    backgroundColor: 'white',
+    backgroundColor: '#F8F9FA',
     borderWidth: 1,
-    borderColor: '#dee2e6',
-    borderRadius: 8,
-    padding: 12,
+    borderColor: '#E1E5E9',
+    borderRadius: 12,
+    padding: 16,
     fontSize: 16,
-    color: '#333',
-    minHeight: 80,
+    color: Colors.light.text,
+    minHeight: 100,
+    textAlignVertical: 'top',
   },
 });
 
