@@ -42,15 +42,15 @@ const ImagePreview: React.FC<ImagePreviewProps> = ({
             style={styles.image}
             resizeMode="cover"
           />
-          <View style={styles.imageOverlay}>
+          {/* <View style={styles.imageOverlay}>
             <TouchableOpacity style={styles.fullscreenButton} onPress={onRetake}>
               <Ionicons name="expand" size={20} color="white" />
             </TouchableOpacity>
-          </View>
+          </View> */}
         </View>
 
         {/* Location Information */}
-        {locationData && (
+        {/* {locationData && (
           <View style={styles.locationInfo}>
             <View style={styles.locationHeader}>
               <Ionicons name="location" size={16} color={Colors.light.tint} />
@@ -65,7 +65,7 @@ const ImagePreview: React.FC<ImagePreviewProps> = ({
               </Text>
             )}
           </View>
-        )}
+        )} */}
 
         <View style={styles.actions}>
           <TouchableOpacity style={styles.actionButton} onPress={onRetake}>
@@ -73,7 +73,7 @@ const ImagePreview: React.FC<ImagePreviewProps> = ({
             <Text style={styles.actionText}>Retake Photo</Text>
           </TouchableOpacity>
           
-          {onUpload && (
+          {/* {onUpload && (
             <TouchableOpacity 
               style={[styles.actionButton, styles.uploadButton, isUploading && styles.uploadingButton]} 
               onPress={onUpload}
@@ -88,7 +88,7 @@ const ImagePreview: React.FC<ImagePreviewProps> = ({
                 {isUploading ? 'Uploading...' : 'Upload Photo'}
               </Text>
             </TouchableOpacity>
-          )}
+          )} */}
           
           <TouchableOpacity style={[styles.actionButton, styles.removeButton]} onPress={onRemove}>
             <MaterialIcons name="delete-outline" size={18} color="#F44336" />

@@ -17,7 +17,7 @@ export default function PointsScreen() {
     },
     {
       id: 2,
-      name: 'Shopping Mall',
+      name: 'Southside Refuse Site',
       distance: '1.2 km away',
       hours: '9:00 AM - 9:00 PM',
       address: '456 Mall Street, City Center',
@@ -26,7 +26,7 @@ export default function PointsScreen() {
     },
     {
       id: 3,
-      name: 'University Campus',
+      name: 'North Zone Waste Facility',
       distance: '2.1 km away',
       hours: '7:00 AM - 10:00 PM',
       address: '789 University Blvd, Campus',
@@ -72,7 +72,7 @@ export default function PointsScreen() {
 
           {/* Collection Points List */}
           <View style={styles.pointsList}>
-            {collectionPoints.map((point) => (
+            {filteredPoints.map((point) => (
               <View key={point.id} style={styles.pointCard}>
                 <Image source={{ uri: point.image }} style={styles.pointImage} />
                 <View style={styles.pointInfo}>

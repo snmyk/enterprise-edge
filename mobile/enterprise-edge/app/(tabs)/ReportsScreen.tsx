@@ -42,11 +42,11 @@ export default function ReportsScreen() {
       typeIcon: Camera,
       typeColor: '#10B981',
       points: 50,
-      image: 'https://www.gettyimages.com/detail/photo/overflowing-wheelie-bin-royalty-free-image/155382228',
+      image: 'https://img.huffingtonpost.com/asset/5c642e3f2500003502c88afb.jpeg?cache=QcnyC9W2zQ&ops=crop_0_1793_3346_3227%2Cscalefit_1440&format=webp',
     },
     {
       id: 2,
-      title: 'Broken Container',
+      title: 'illegal Dumping Site',
       location: 'Park Avenue',
       time: '1 day ago',
       status: 'Resolved',
@@ -55,7 +55,7 @@ export default function ReportsScreen() {
       typeIcon: Mic,
       typeColor: '#3B82F6',
       points: 75,
-      image: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400',
+      image: 'https://groundup.org.za/media/uploads/images/photographers/Chris%20Gilili/palm_springs_garbage.jpeg',
     },
 
     {
@@ -69,7 +69,7 @@ export default function ReportsScreen() {
       typeIcon: Camera,
       typeColor: '#10B981',
       points: 60,
-      image: 'https://images.unsplash.com/photo-1606787366850-de6330128bfc?w=400',
+      image: 'https://images.immediate.co.uk/production/volatile/sites/30/2020/08/recycling-hero-ca48975.jpg?quality=90&webp=true&resize=700,636',
     },
   ];
 
