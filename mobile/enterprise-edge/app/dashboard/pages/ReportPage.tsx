@@ -3,6 +3,8 @@ import { View, Text, StyleSheet, TouchableOpacity, ScrollView, TextInput, Alert 
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { Camera, Mic, Edit3, ArrowLeft, Send, MapPin, AlertTriangle } from 'lucide-react-native';
+import Header from '../../../components/Header';
+import BottomNavigation from '../../../components/BottomNavigation';
 
 const ReportPage = () => {
   const router = useRouter();
@@ -41,6 +43,12 @@ const ReportPage = () => {
     setReportType(type);
   };
 
+  const handleBackToSelection = () => {
+    setReportType(null);
+    setDescription('');
+    setLocation('');
+  };
+
   const handleSubmitReport = () => {
     if (!reportType) {
       Alert.alert('Error', 'Please select a report type');
@@ -72,7 +80,13 @@ const ReportPage = () => {
 
     return (
       <View style={styles.formContainer}>
-        <Text style={styles.formTitle}>Report Details</Text>
+        <View style={styles.formHeader}>
+          <TouchableOpacity style={styles.backButton} onPress={handleBackToSelection}>
+            <ArrowLeft size={24} color="#111827" />
+          </TouchableOpacity>
+          <Text style={styles.formTitle}>Report Details</Text>
+          <View style={styles.headerSpacer} />
+        </View>
         
         <View style={styles.inputContainer}>
           <Text style={styles.inputLabel}>Location</Text>
@@ -115,14 +129,7 @@ const ReportPage = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.header}>
-        <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
-          <ArrowLeft size={24} color="#111827" />
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>Report Waste Issue</Text>
-        <View style={styles.headerSpacer} />
-      </View>
-
+      <Header />
       <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
         <View style={styles.content}>
           {!reportType ? (
@@ -153,6 +160,7 @@ const ReportPage = () => {
           )}
         </View>
       </ScrollView>
+      <BottomNavigation />
     </SafeAreaView>
   );
 };
@@ -161,32 +169,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#F9FAFB',
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    backgroundColor: '#FFFFFF',
-    paddingHorizontal: 16,
-    paddingVertical: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: '#E5E7EB',
-  },
-  backButton: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: '#F3F4F6',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  headerTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: '#111827',
-  },
-  headerSpacer: {
-    width: 40,
   },
   scrollView: {
     flex: 1,
@@ -248,11 +230,27 @@ const styles = StyleSheet.create({
   formContainer: {
     flex: 1,
   },
+  formHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 24,
+  },
+  backButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: '#F3F4F6',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   formTitle: {
     fontSize: 20,
     fontWeight: '600',
     color: '#111827',
-    marginBottom: 24,
+  },
+  headerSpacer: {
+    width: 40,
   },
   inputContainer: {
     marginBottom: 20,

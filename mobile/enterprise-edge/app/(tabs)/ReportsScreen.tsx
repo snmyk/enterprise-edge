@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Image } from 'rea
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { Camera, Mic, Edit3, AlertTriangle, MapPin, Clock, TrendingUp, Award, Calendar, Filter } from 'lucide-react-native';
+import Header from '../../components/Header';
 
 export default function ReportsScreen() {
   const router = useRouter();
@@ -99,16 +100,7 @@ export default function ReportsScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.header}>
-        <View>
-          <Text style={styles.headerTitle}>My Reports</Text>
-          <Text style={styles.headerSubtitle}>Track your waste management impact</Text>
-        </View>
-        <TouchableOpacity style={styles.filterButton}>
-          <Filter size={20} color="#6B7280" />
-        </TouchableOpacity>
-      </View>
-
+      <Header />
       <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
         <View style={styles.content}>
           {/* Stats Section */}
