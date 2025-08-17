@@ -33,8 +33,9 @@ export default function BottomNavigation() {
       <Tabs.Screen
         name="PointsScreen"
         options={{
-          tabBarIcon: ({ size, color }) =>
+          tabBarIcon: ({ size, color }) => (
             <Ionicons name="location" size={24} color={color} />
+          ),
         }}
       />
       <Tabs.Screen
