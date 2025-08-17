@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Route, router } from 'expo-router';
 import { ScrollView, View, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Header from '@/components/Header';
@@ -8,7 +9,7 @@ import RecentReports from '@/components/RecentReports';
 
 export default function RewardsScreen() {
   // Manage points state at the parent level so both Header and RewardsSection can access it
-  const [currentPoints, setCurrentPoints] = useState(1250);
+  const [currentPoints, setCurrentPoints] = useState(1750);
 
   const handlePointsUpdate = (newPoints: number) => {
     setCurrentPoints(newPoints);
@@ -24,7 +25,9 @@ export default function RewardsScreen() {
             onPointsUpdate={handlePointsUpdate}
           />
           <CollectionPoints  />
-          <RecentReports />
+          <RecentReports showBackButton={true} 
+            onBack={() => router.push('/(tabs)/ReportsScreen')}
+          />
         </View>
       </ScrollView>
   </SafeAreaView>

@@ -4,6 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { Camera, Mic, Edit3, AlertTriangle, MapPin, Clock, TrendingUp, Award, Calendar, Filter } from 'lucide-react-native';
 import Header from '../../components/Header';
+import BottomNavigation from '@/components/BottomNavigation';
 
 export default function ReportsScreen() {
   const router = useRouter();
@@ -100,7 +101,7 @@ export default function ReportsScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <Header currentPoints={1250} />
+      <Header currentPoints={1750} />
       <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
         <View style={styles.content}>
           {/* Stats Section */}
@@ -215,6 +216,7 @@ export default function ReportsScreen() {
           </View>
         </View>
       </ScrollView>
+      <BottomNavigation />
     </SafeAreaView>
   );
 }
