@@ -125,19 +125,6 @@ export default function ProfileScreen() {
             </View>
           </View>
 
-          {/* Points Section */}
-          <View style={styles.pointsSection}>
-            <View style={styles.pointsHeader}>
-              <Award size={20} color="#F59E0B" />
-              <Text style={styles.pointsTitle}>Total Points</Text>
-            </View>
-            <Text style={styles.pointsValue}>{userProfile.totalPoints}</Text>
-            <View style={styles.pointsProgress}>
-              <View style={[styles.progressBar, { width: '75%' }]} />
-            </View>
-            <Text style={styles.pointsSubtext}>750 points to next level</Text>
-          </View>
-
           {/* Contact Information */}
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>Contact Information</Text>

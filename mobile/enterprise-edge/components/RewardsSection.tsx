@@ -1,70 +1,137 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import { Smartphone, Gift, ShoppingBag, Coins } from 'lucide-react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Alert } from 'react-native';
 
-export default function RewardsSection() {
+interface RewardsSectionProps {
+  currentPoints: number;
+  onPointsUpdate: (newPoints: number) => void;
+}
+
+export default function RewardsSection({ currentPoints, onPointsUpdate }: RewardsSectionProps) {
+  
+  // Reward configurations with dynamic disabled state based on current points
   const rewards = [
-    { id: 1, name: 'Airtime', points: 500, icon: Smartphone, color: '#F59E0B' },
-    { id: 2, name: 'Voucher', points: 1000, icon: Gift, color: '#3B82F6' },
-    { id: 3, name: 'Groceries', points: 1500, icon: ShoppingBag, color: '#10B981' },
+    {
+      id: 'airtime',
+      name: 'Airtime',
+      cost: 500,
+      icon: '📱', // Replace with actual icon component
+      color: '#FF9500',
+      backgroundColor: '#FFF3E0',
+      disabled: currentPoints < 500,
+    },
+    {
+      id: 'voucher',
+      name: 'Voucher',
+      cost: 1000,
+      icon: '🎁', // Replace with actual icon component
+      color: '#007AFF',
+      backgroundColor: '#E3F2FD',
+      disabled: currentPoints < 1000,
+    },
+    {
+      id: 'groceries',
+      name: 'Groceries',
+      cost: 1500,
+      icon: '🛒', // Replace with actual icon component
+      color: '#8E8E93',
+      backgroundColor: '#F2F2F7',
+      disabled: currentPoints < 1500,
+    },
   ];
 
-  const currentPoints = 1250;
-  const nextRewardPoints = 1500;
-  const progress = currentPoints / nextRewardPoints;
+  const handleRewardRedemption = (reward: typeof rewards[0]) => {
+    if (reward.disabled || currentPoints < reward.cost) {
+      Alert.alert(
+        'Insufficient Points',
+        `You need ${reward.cost} points to redeem ${reward.name}. You currently have ${currentPoints} points.`,
+        [{ text: 'OK' }]
+      );
+      return;
+    }
+
+    Alert.alert(
+      'Redeem Reward',
+      `Are you sure you want to redeem ${reward.name} for ${reward.cost} points?`,
+      [
+        {
+          text: 'Cancel',
+          style: 'cancel',
+        },
+        {
+          text: 'Redeem',
+          onPress: () => {
+            // Deduct points
+            const newPoints = currentPoints - reward.cost;
+            onPointsUpdate(newPoints);
+            
+            // Show success message
+            Alert.alert(
+              'Success!',
+              `You have successfully redeemed ${reward.name}! Your new balance is ${newPoints} points.`,
+              [{ text: 'OK' }]
+            );
+            
+            // Here you would typically also:
+            // 1. Send API call to backend to record the redemption
+            // 2. Generate voucher code or trigger airtime top-up
+            // 3. Add to user's rewards history
+          },
+        },
+      ]
+    );
+  };
+
+  const calculateProgress = () => {
+    const nextRewardCost = 1500; // Next reward threshold
+    return (currentPoints / nextRewardCost) * 100;
+  };
 
   return (
     <View style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.title}>Your Rewards</Text>
         <View style={styles.pointsContainer}>
-          <Coins size={16} color="#F59E0B" />
+          <Text style={styles.pointsIcon}>🪙</Text>
           <Text style={styles.pointsText}>{currentPoints} pts</Text>
         </View>
       </View>
-      
+
       <View style={styles.progressSection}>
-        <Text style={styles.progressLabel}>Progress to next reward</Text>
-        <Text style={styles.progressText}>{currentPoints}/{nextRewardPoints}</Text>
+        <Text style={styles.progressText}>Progress to next reward</Text>
+        <Text style={styles.progressSubText}>{currentPoints}/1500</Text>
         <View style={styles.progressBarContainer}>
-          <View style={[styles.progressBar, { width: `${progress * 100}%` }]} />
+          <View 
+            style={[
+              styles.progressBar, 
+              { width: `${Math.min(calculateProgress(), 100)}%` }
+            ]} 
+          />
         </View>
       </View>
 
       <View style={styles.rewardsGrid}>
-        {rewards.map((reward) => {
-          const IconComponent = reward.icon;
-          const isAvailable = currentPoints >= reward.points;
-          
-          return (
-            <TouchableOpacity
-              key={reward.id}
-              style={[
-                styles.rewardCard,
-                { backgroundColor: isAvailable ? reward.color + '20' : '#F3F4F6' }
-              ]}
-            >
-              <View style={[
-                styles.iconContainer,
-                { backgroundColor: isAvailable ? reward.color : '#9CA3AF' }
-              ]}>
-                <IconComponent size={24} color="#FFFFFF" />
-              </View>
-              <Text style={[
-                styles.rewardName,
-                { color: isAvailable ? '#111827' : '#9CA3AF' }
-              ]}>
-                {reward.name}
-              </Text>
-              <Text style={[
-                styles.rewardPoints,
-                { color: isAvailable ? '#6B7280' : '#9CA3AF' }
-              ]}>
-                {reward.points} pts
-              </Text>
-            </TouchableOpacity>
-          );
-        })}
+        {rewards.map((reward) => (
+          <TouchableOpacity
+            key={reward.id}
+            style={[
+              styles.rewardCard,
+              { backgroundColor: reward.backgroundColor },
+              reward.disabled && styles.rewardCardDisabled
+            ]}
+            onPress={() => handleRewardRedemption(reward)}
+            disabled={reward.disabled}
+          >
+            <View style={[styles.rewardIcon, { backgroundColor: reward.color }]}>
+              <Text style={styles.rewardIconText}>{reward.icon}</Text>
+            </View>
+            <Text style={[styles.rewardName, reward.disabled && styles.rewardNameDisabled]}>
+              {reward.name}
+            </Text>
+            <Text style={[styles.rewardCost, reward.disabled && styles.rewardCostDisabled]}>
+              {reward.cost} pts
+            </Text>
+          </TouchableOpacity>
+        ))}
       </View>
     </View>
   );
@@ -72,88 +139,110 @@ export default function RewardsSection() {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#FFFFFF',
-    margin: 16,
-    marginBottom: 8,
-    borderRadius: 16,
+    backgroundColor: 'white',
+    borderRadius: 12,
     padding: 20,
+    marginBottom: 20,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
     shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 3,
+    shadowRadius: 3.84,
+    elevation: 5,
   },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 16,
+    marginBottom: 20,
   },
   title: {
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: '600',
-    color: '#111827',
+    color: '#1C1C1E',
   },
   pointsContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 4,
+    backgroundColor: '#FFF3E0',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 20,
+  },
+  pointsIcon: {
+    fontSize: 16,
+    marginRight: 4,
   },
   pointsText: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#F59E0B',
+    color: '#FF9500',
   },
   progressSection: {
-    marginBottom: 20,
-  },
-  progressLabel: {
-    fontSize: 14,
-    color: '#6B7280',
-    marginBottom: 4,
+    marginBottom: 24,
   },
   progressText: {
+    fontSize: 14,
+    color: '#8E8E93',
+    marginBottom: 4,
+  },
+  progressSubText: {
     fontSize: 12,
-    color: '#9CA3AF',
+    color: '#8E8E93',
     marginBottom: 8,
   },
   progressBarContainer: {
     height: 8,
-    backgroundColor: '#E5E7EB',
+    backgroundColor: '#F2F2F7',
     borderRadius: 4,
     overflow: 'hidden',
   },
   progressBar: {
     height: '100%',
-    backgroundColor: '#10B981',
+    backgroundColor: '#34C759',
     borderRadius: 4,
   },
   rewardsGrid: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    gap: 12,
   },
   rewardCard: {
     flex: 1,
     alignItems: 'center',
     padding: 16,
     borderRadius: 12,
+    marginHorizontal: 4,
   },
-  iconContainer: {
+  rewardCardDisabled: {
+    opacity: 0.5,
+  },
+  rewardIcon: {
     width: 48,
     height: 48,
     borderRadius: 24,
-    justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 8,
+    justifyContent: 'center',
+    marginBottom: 12,
+  },
+  rewardIconText: {
+    fontSize: 24,
   },
   rewardName: {
     fontSize: 14,
-    fontWeight: '500',
+    fontWeight: '600',
+    color: '#1C1C1E',
     marginBottom: 4,
   },
-  rewardPoints: {
+  rewardNameDisabled: {
+    color: '#8E8E93',
+  },
+  rewardCost: {
     fontSize: 12,
-    fontWeight: '400',
+    color: '#8E8E93',
+  },
+  rewardCostDisabled: {
+    color: '#C7C7CC',
   },
 });

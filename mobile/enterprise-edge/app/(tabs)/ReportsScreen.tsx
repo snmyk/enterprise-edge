@@ -76,7 +76,7 @@ export default function ReportsScreen() {
     totalReports: 35,
     resolvedReports: 28,
     pendingReports: 7,
-    totalPoints: 2850,
+    totalPoints: 1250,
     streak: 12,
   };
 
@@ -100,7 +100,7 @@ export default function ReportsScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <Header />
+      <Header currentPoints={1250} />
       <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
         <View style={styles.content}>
           {/* Stats Section */}

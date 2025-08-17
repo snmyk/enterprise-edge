@@ -11,7 +11,7 @@ import BottomNavigation from '@/components/BottomNavigation';
 export default function HomeScreen() {
   return (
     <SafeAreaView style={styles.container}>
-      <Header />
+      <Header currentPoints={1250} />
       <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
         <View style={styles.content}>
           <DashBoard />
