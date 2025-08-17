@@ -3,7 +3,12 @@ import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Coins, User } from 'lucide-react-native';
 import { useRouter } from 'expo-router';
 
-export default function Header() {
+
+interface HeaderProps {
+  currentPoints: number;
+}
+
+export default function Header({ currentPoints }: HeaderProps) {
   const router = useRouter();
 
   const handleProfilePress = () => {
@@ -25,7 +30,7 @@ export default function Header() {
       <View style={styles.rightSection}>
         <View style={styles.pointsContainer}>
           <Coins size={16} color="#F59E0B" />
-          <Text style={styles.pointsText}>1250</Text>
+          <Text style={styles.pointsText}>{currentPoints}</Text>
         </View>
         <TouchableOpacity style={styles.profileButton} onPress={handleProfilePress}>
           <User size={20} color="#6B7280" />
